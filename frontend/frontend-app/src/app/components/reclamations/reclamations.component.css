@@ -1,0 +1,50 @@
+.reclamations-header {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  padding: 3rem 0;
+  color: white;
+  margin-bottom: 2rem;
+}
+
+.card-custom {
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.05);
+  background: white;
+}
+
+.table-container {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.custom-table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: #64748b;
+  padding: 1.25rem 1rem;
+  background-color: #f8fafc;
+}
+
+.custom-table td {
+  padding: 1.25rem 1rem;
+}
+
+
+.btn-bna {
+  background-color: #000;
+  color: #fff;
+  border-radius: 12px;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,144 @@
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <div class="header-info">
+      <h2 class="fw-bold mb-1">Gestion des Comptes</h2>
+      <p class="text-muted small mb-0">Contrôlez les accès clients et administrez les rôles de gestion.</p>
+    </div>
+    <button *ngIf="isAdmin" class="btn btn-primary rounded-pill px-4 shadow-sm" (click)="showCreateForm = !showCreateForm; showEditForm = false">
+      <i class="bi bi-person-plus-fill me-2"></i>Nouveau Gestionnaire
+    </button>
+  </div>
+
+  <!-- FORMULAIRE CRÉATION -->
+  <div *ngIf="showCreateForm" class="card border-0 shadow-lg rounded-4 mb-5 animate-fade-in">
+    <div class="card-header bg-success text-white py-3 px-4 border-0 rounded-top-4">
+      <h5 class="mb-0 fw-bold"><i class="bi bi-plus-circle-fill me-2"></i>Ajouter un nouveau Gestionnaire</h5>
+    </div>
+    <div class="card-body p-4">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label small fw-bold text-uppercase">Nom Complet</label>
+          <input class="form-control rounded-3" [(ngModel)]="newManager.username" placeholder="ex: Ahmed Ben Salah">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-bold text-uppercase">Email Professionnel</label>
+          <input class="form-control rounded-3" [(ngModel)]="newManager.email" placeholder="email@bna.tn">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-bold text-uppercase">N° CIN</label>
+          <input class="form-control rounded-3" [(ngModel)]="newManager.cin" placeholder="8 chiffres">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small fw-bold text-uppercase">Adresse</label>
+          <input class="form-control rounded-3" [(ngModel)]="newManager.address" placeholder="ex: 12 Rue de Palestine, Tunis">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small fw-bold text-uppercase">Mot de passe</label>
+          <input type="password" class="form-control rounded-3" [(ngModel)]="newManager.password" placeholder="••••••••">
+        </div>
+      </div>
+    </div>
+    <div class="card-footer bg-light p-3 d-flex justify-content-end gap-2 border-0 rounded-bottom-4">
+      <button class="btn btn-link text-muted text-decoration-none px-4" (click)="showCreateForm = false">Annuler</button>
+      <button class="btn btn-success rounded-pill px-5 fw-bold shadow-sm" (click)="createManager()">Créer le compte</button>
+    </div>
+  </div>
+
+  <!-- FORMULAIRE MODIFICATION -->
+  <div *ngIf="showEditForm" class="card border-0 shadow-lg rounded-4 mb-5 animate-fade-in">
+    <div class="card-header bg-warning text-dark py-3 px-4 border-0 rounded-top-4">
+      <h5 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i>Modifier : {{ selectedUser.username }}</h5>
+    </div>
+    <div class="card-body p-4">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label small fw-bold text-uppercase">Nom d'utilisateur</label>
+          <input class="form-control rounded-3" [(ngModel)]="selectedUser.username">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-bold text-uppercase">Email</label>
+          <input class="form-control rounded-3" [(ngModel)]="selectedUser.email">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-bold text-uppercase">CIN</label>
+          <input class="form-control rounded-3" [(ngModel)]="selectedUser.cin">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small fw-bold text-uppercase">Adresse</label>
+          <input class="form-control rounded-3" [(ngModel)]="selectedUser.address" placeholder="ex: 12 Rue de Palestine, Tunis">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small fw-bold text-uppercase">Nouveau Mot de passe</label>
+          <input type="password" class="form-control rounded-3" [(ngModel)]="selectedUser.password" placeholder="Optionnel">
+        </div>
+      </div>
+    </div>
+    <div class="card-footer bg-light p-3 d-flex justify-content-end gap-2 border-0 rounded-bottom-4">
+      <button class="btn btn-link text-muted text-decoration-none px-4" (click)="showEditForm = false">Fermer</button>
+      <button class="btn btn-warning rounded-pill px-5 fw-bold shadow-sm" (click)="updateUser()">Mettre à jour</button>
+    </div>
+  </div>
+
+  <!-- TABLEAU PROFESSIONNEL -->
+  <div class="table-container shadow-sm">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th class="ps-4">Utilisateur</th>
+          <th>Contact & Identité</th>
+          <th class="text-center">Rôle Système</th>
+          <th class="pe-4 text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td class="ps-4">
+            <div class="d-flex align-items-center gap-3">
+              <div class="bg-primary bg-opacity-10 p-2 rounded-circle text-primary">
+                <i class="bi bi-person-fill"></i>
+              </div>
+              <div>
+                <div class="fw-bold text-dark">{{ user.username }}</div>
+                <div class="text-muted small">ID: #{{ user.id | slice:0:8 }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="d-flex flex-column">
+              <span class="text-dark"><i class="bi bi-envelope me-2 text-muted"></i>{{ user.email }}</span>
+              <span class="text-muted small"><i class="bi bi-card-text me-2"></i>CIN: {{ user.cin || 'N/A' }}</span>
+              <span class="text-muted small" *ngIf="user.address"><i class="bi bi-geo-alt me-2"></i>{{ user.address }}</span>
+            </div>
+          </td>
+          <td class="text-center">
+            <span *ngFor="let r of user.roles" 
+                  class="badge rounded-pill px-3 py-2"
+                  [ngClass]="r.name === 'ROLE_ADMIN' ? 'bg-danger' : (r.name === 'ROLE_GESTIONNAIRE' ? 'bg-primary' : 'bg-success')">
+              <i class="bi" [ngClass]="r.name === 'ROLE_ADMIN' ? 'bi-star-fill' : (r.name === 'ROLE_GESTIONNAIRE' ? 'bi-briefcase-fill' : 'bi-person')"></i>
+              <span class="ms-1">{{ r.name === 'ROLE_GESTIONNAIRE' ? 'GESTIONNAIRE' : (r.name === 'ROLE_ADMIN' ? 'ADMIN' : 'CLIENT') }}</span>
+            </span>
+          </td>
+          <td class="pe-4 text-end">
+            <div class="btn-group">
+              <button class="btn btn-outline-primary btn-sm rounded-pill px-3 me-2" 
+                      *ngIf="isAdmin && user.roles[0].name === 'ROLE_GESTIONNAIRE'"
+                      (click)="editUser(user)">
+                <i class="bi bi-pencil me-1"></i> Modifier
+              </button>
+              <button class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                      (click)="deleteUser(user.id)">
+                <i class="bi bi-trash me-1"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="text-center mt-4">
+    <a routerLink="/admin-dashboard" class="text-muted small text-decoration-none">
+      <i class="bi bi-arrow-left me-1"></i> Retour au tableau de bord
+    </a>
+  </div>
+</div>

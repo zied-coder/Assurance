@@ -1,0 +1,102 @@
+<div class="login-container">
+
+  <!-- ══ LEFT: BRAND ══ -->
+  <div class="brand-side">
+    <div class="brand-blob"></div>
+    <div class="brand-watermark">{{ 'common.bna_assurances' | translate | uppercase }}</div>
+
+    <div class="welcome-content">
+
+      <!-- Logo -->
+      <div class="logo-container">
+        <img src="assets/images/bna-logo.png" alt="Assurances Logo" class="logo-img" style="object-fit:contain; border-radius:8px; background:white; padding:4px;">
+        <div class="logo-text">
+          <div class="brand-name">Assurances</div>
+        </div>
+      </div>
+
+      <h1>{{ 'login.welcome_title' | translate }}</h1>
+      <p>{{ 'login.welcome_desc' | translate }}</p>
+
+      <div class="features-list">
+        <div class="feature-item">
+          <i class="bi bi-shield-check"></i>
+          <span>{{ 'login.feat_contracts' | translate }}</span>
+        </div>
+        <div class="feature-item">
+          <i class="bi bi-lightning-charge-fill"></i>
+          <span>{{ 'login.feat_claims' | translate }}</span>
+        </div>
+        <div class="feature-item">
+          <i class="bi bi-headset"></i>
+          <span>{{ 'login.feat_support' | translate }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-accent-bar"></div>
+  </div>
+
+  <!-- ══ RIGHT: FORM ══ -->
+  <div class="form-side">
+    <div class="login-card">
+
+      <!-- Top accent -->
+      <div class="login-card-accent"></div>
+
+      <!-- Mobile logo -->
+      <div class="form-logo-mobile">
+        <img src="assets/images/bna-logo.png" alt="Assurances Logo"
+             style="height:50px; border-radius:10px; object-fit:contain; width:50px; border:2px solid #e8ecf8; background:white; padding:3px;">
+      </div>
+
+      <div class="form-header">
+        <h2>{{ 'login.connect' | translate }} ({{ 'login.title_user' | translate }})</h2>
+        <p>{{ 'login.connect_subtitle' | translate }}</p>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-box">
+        <i class="bi bi-exclamation-circle-fill"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <form (ngSubmit)="login()">
+        <div class="form-group">
+          <label>{{ 'login.identifier' | translate }}</label>
+          <input type="text"
+                 class="input-styled"
+                 [(ngModel)]="username"
+                 name="username"
+                 placeholder="votre.nom@exemple.com"
+                 required>
+        </div>
+
+        <div class="form-group">
+          <label>{{ 'login.password' | translate }}</label>
+          <input type="password"
+                 class="input-styled"
+                 [(ngModel)]="password"
+                 name="password"
+                 placeholder="••••••••••••"
+                 required>
+        </div>
+
+        <button type="submit" class="btn-user-login">
+          {{ 'login.btn_access' | translate }} <i class="bi bi-arrow-right-short ms-1"></i>
+        </button>
+      </form>
+
+      <div class="signup-section">
+        <span>{{ 'login.not_client' | translate }}</span>
+        <a class="signup-link" (click)="goToSignup()">{{ 'login.create_account' | translate }}</a>
+      </div>
+
+      <div class="text-center mt-3">
+        <a routerLink="/" class="text-muted small text-decoration-none" style="font-size:0.82rem;">
+          <i class="bi bi-house-door me-1"></i> {{ 'common.back_to_home' | translate }}
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>

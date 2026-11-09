@@ -1,0 +1,309 @@
+/* Login User – BNA Brand Redesign */
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+.login-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+/* ── LEFT: BRAND SIDE ── */
+.brand-side {
+  background: linear-gradient(135deg, #2B3990 0%, #1a2472 60%, #111a5c 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.brand-watermark {
+  position: absolute;
+  bottom: -30px;
+  left: -20px;
+  font-size: 5.5rem;
+  font-weight: 950;
+  color: rgba(255, 255, 255, 0.035);
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 4px;
+  user-select: none;
+}
+
+/* BG texture overlay */
+.brand-side::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/assets/images/bna-logo.png') center/contain no-repeat;
+  opacity: 0.07;
+  mix-blend-mode: luminosity;
+}
+
+/* Decorative blobs */
+.brand-side::after {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 350px; height: 350px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
+}
+
+.brand-blob {
+  position: absolute;
+  bottom: -100px; left: -60px;
+  width: 300px; height: 300px;
+  background: rgba(0,132,61,0.15);
+  border-radius: 50%;
+}
+
+.welcome-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  width: 100%;
+  max-width: 420px;
+}
+
+/* Logo container */
+.logo-container {
+  margin-bottom: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.logo-img {
+  width: 64px; height: 64px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.25);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.logo-text { text-align: left; }
+.logo-text .brand-name {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  color: white;
+  line-height: 1;
+}
+.logo-text .brand-sub {
+  font-size: 0.7rem;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+}
+
+.welcome-content h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  margin-bottom: 1.25rem;
+  line-height: 1.1;
+}
+
+.welcome-content p {
+  font-size: 1.1rem;
+  opacity: 0.85;
+  max-width: 380px;
+  margin: 0 auto 3rem;
+  line-height: 1.7;
+}
+
+.features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  text-align: left;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255,255,255,0.08);
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.25s ease;
+}
+
+.feature-item:hover {
+  background: rgba(255,255,255,0.14);
+  transform: translateX(4px);
+}
+
+.feature-item i {
+  font-size: 1.4rem;
+  color: #FFD100;
+  flex-shrink: 0;
+}
+
+.feature-item span {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Green bottom bar on brand side */
+.brand-accent-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #2B3990, #1e40af, #FFD100);
+}
+
+/* ── RIGHT: FORM SIDE ── */
+.form-side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 3rem;
+  background: #f4f6fb;
+  position: relative;
+}
+
+/* Top-right logo on form side (mobile) */
+.form-logo-mobile {
+  display: none;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: white;
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: 0 12px 48px rgba(43,57,144,0.12);
+  border: 1px solid #e8ecf8;
+}
+
+/* Top accent stripe */
+.login-card-accent {
+  height: 4px;
+  background: linear-gradient(90deg, #2B3990, #1e40af);
+  border-radius: 4px 4px 0 0;
+  margin: -2.5rem -2.5rem 2rem;
+}
+
+.form-header { margin-bottom: 2rem; }
+
+.form-header h2 {
+  font-size: 1.875rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.5px;
+}
+
+.form-header p { color: #64748b; font-weight: 500; font-size: 0.95rem; }
+
+.form-group { margin-bottom: 1.25rem; }
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.input-styled {
+  width: 100%;
+  padding: 0.875rem 1.1rem;
+  border-radius: 12px;
+  border: 2px solid #e8ecf8;
+  background: #f8f9ff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1a1a2e;
+  transition: all 0.25s ease;
+}
+
+.input-styled::placeholder { color: #aab4cc; }
+
+.input-styled:focus {
+  border-color: #2B3990;
+  background: white;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(43,57,144,0.12);
+}
+
+.btn-user-login {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #2B3990 0%, #1a2472 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-top: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 20px rgba(43,57,144,0.3);
+  cursor: pointer;
+}
+
+.btn-user-login:hover {
+  background: linear-gradient(135deg, #1a2472 0%, #111a5c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(43,57,144,0.4);
+}
+
+.error-box {
+  background: #fff0f0;
+  color: #b30000;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid #ffd5d5;
+}
+
+.signup-section {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eef0f8;
+}
+
+.signup-section span { color: #64748b; font-size: 0.9rem; }
+
+.signup-link {
+  color: #2B3990;
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 0.4rem;
+  cursor: pointer;
+}
+
+.signup-link:hover { text-decoration: underline; color: #1e40af; }
+
+@media (max-width: 1024px) {
+  .login-container { grid-template-columns: 1fr; }
+  .brand-side { display: none; }
+  .form-logo-mobile { display: block; }
+  .form-side { padding: 2rem 1.25rem; }
+}

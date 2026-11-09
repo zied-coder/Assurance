@@ -1,0 +1,564 @@
+/* ============================================================
+   BNA — GLOBAL DESIGN SYSTEM
+   Brand: Royal Blue #2B3990 | Accent Blue #1e40af | White
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ===================== CSS VARIABLES ===================== */
+:root {
+  /* Primary Palette */
+  --bna-blue:          #2B3990;
+  --bna-blue-dark:     #1a2472;
+  --bna-blue-deeper:   #111a5c;
+  --bna-blue-light:    #3d4fa8;
+  --bna-blue-soft:     #eef0fb;
+  --bna-blue-mist:     #f0f2fc;
+
+  /* Accent */
+  --bna-green:         #1e40af;
+  --bna-green-dark:    #1e3a8a;
+  --bna-green-light:   #dbeafe;
+  --bna-yellow:        #FFD100;
+
+  /* Neutrals */
+  --bna-white:         #ffffff;
+  --bna-bg:            #f4f6fb;
+  --bna-text:          #1a1a2e;
+  --bna-text-light:    #64748b;
+  --bna-border:        #e2e6f3;
+
+  /* Gradients */
+  --gradient-primary:  linear-gradient(135deg, #2B3990 0%, #1a2472 60%, #111a5c 100%);
+  --gradient-hero:     linear-gradient(135deg, #2B3990 0%, #3d4fa8 50%, #1e40af 100%);
+  --gradient-green:    linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+  --gradient-card:     linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+
+  /* Shadows */
+  --shadow-xs:  0 1px 3px rgba(43,57,144,0.08);
+  --shadow-sm:  0 2px 8px rgba(43,57,144,0.10);
+  --shadow-md:  0 4px 16px rgba(43,57,144,0.14);
+  --shadow-lg:  0 8px 32px rgba(43,57,144,0.18);
+  --shadow-xl:  0 16px 48px rgba(43,57,144,0.22);
+
+  /* Border radius */
+  --radius-sm:  8px;
+  --radius-md:  14px;
+  --radius-lg:  20px;
+  --radius-xl:  28px;
+}
+
+/* ===================== RESET & BASE ===================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--bna-bg);
+  color: var(--bna-text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===================== BOOTSTRAP COLOR OVERRIDES ===================== */
+/* Override Bootstrap success colors to use BNA blue */
+.bg-success { background-color: var(--bna-green) !important; }
+.bg-success.bg-opacity-10 { background-color: rgba(30, 64, 175, 0.1) !important; }
+.text-success { color: var(--bna-green) !important; }
+.border-success { border-color: var(--bna-green) !important; }
+.btn-success { background-color: var(--bna-green) !important; border-color: var(--bna-green) !important; }
+.btn-success:hover { background-color: var(--bna-green-dark) !important; border-color: var(--bna-green-dark) !important; }
+.btn-outline-success { color: var(--bna-green) !important; border-color: var(--bna-green) !important; }
+.btn-outline-success:hover { background-color: var(--bna-green) !important; border-color: var(--bna-green) !important; }
+
+/* ===================== NAVBAR ===================== */
+.bna-navbar {
+  background: var(--gradient-primary) !important;
+  border-bottom: 3px solid var(--bna-green);
+  box-shadow: 0 2px 20px rgba(17,26,92,0.4);
+  padding: 0.75rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* ===================== DASHBOARD HEADER ===================== */
+.dashboard-header {
+  background: var(--gradient-primary);
+  padding: 2.5rem 0;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-header::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 300px; height: 300px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
+}
+
+.dashboard-header::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -40px;
+  width: 250px; height: 250px;
+  background: rgba(30, 64, 175, 0.12);
+  border-radius: 50%;
+}
+
+.dashboard-header h1,
+.dashboard-header h2 {
+  color: white !important;
+  font-weight: 800;
+}
+
+.dashboard-header p {
+  color: rgba(255,255,255,0.75) !important;
+}
+
+/* ===================== CARDS ===================== */
+.card-dashboard {
+  border: 1px solid var(--bna-border) !important;
+  border-radius: var(--radius-lg) !important;
+  background: var(--gradient-card);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-dashboard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(43,57,144,0.15) !important;
+}
+
+.card {
+  border-radius: var(--radius-md) !important;
+}
+
+/* ===================== BUTTONS ===================== */
+.btn-bna,
+.btn-primary {
+  background: var(--gradient-primary) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: var(--radius-md) !important;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(43,57,144,0.25);
+}
+
+.btn-bna:hover,
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1a2472 0%, #111a5c 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(43,57,144,0.35);
+  color: white !important;
+}
+
+.btn-bna-green,
+.btn-success {
+  background: var(--gradient-green) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: var(--radius-md) !important;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(0,132,61,0.25);
+}
+
+.btn-bna-green:hover,
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,132,61,0.35);
+  color: white !important;
+}
+
+.btn-outline-primary {
+  color: var(--bna-blue) !important;
+  border-color: var(--bna-blue) !important;
+  border-radius: var(--radius-md) !important;
+  font-weight: 600;
+}
+
+.btn-outline-primary:hover {
+  background: var(--bna-blue) !important;
+  color: white !important;
+}
+
+/* ===================== ICON CIRCLES ===================== */
+.icon-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  font-size: 1.4rem;
+}
+
+.bg-soft-green  { background: var(--bna-green-light); color: var(--bna-green); }
+.bg-soft-blue   { background: var(--bna-blue-soft);   color: var(--bna-blue); }
+.bg-soft-yellow { background: #fff8e1; color: #c47800; }
+.bg-soft-red    { background: #fff0f0; color: #b30000; }
+
+/* ===================== FORM CONTROLS ===================== */
+.form-control,
+.form-select {
+  border: 2px solid var(--bna-border);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  background: white;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--bna-blue) !important;
+  box-shadow: 0 0 0 3px rgba(43,57,144,0.12) !important;
+  outline: none;
+}
+
+/* ===================== BADGES ===================== */
+.badge { font-weight: 600; letter-spacing: 0.03em; border-radius: 8px; }
+
+.badge-soft-primary { background: var(--bna-blue-soft)!important; color: var(--bna-blue)!important; border: 1px solid rgba(43,57,144,0.15)!important; }
+.badge-soft-success { background: var(--bna-green-light)!important; color: var(--bna-green)!important; border: 1px solid rgba(0,132,61,0.15)!important; }
+.badge-soft-warning { background: #fff8e1!important; color: #c47800!important; border: 1px solid rgba(196,120,0,0.15)!important; }
+.badge-soft-danger  { background: #fff0f0!important; color: #b30000!important; border: 1px solid rgba(179,0,0,0.15)!important; }
+.badge-soft-info    { background: #e0f7fa!important; color: #006064!important; border: 1px solid rgba(0,96,100,0.15)!important; }
+.badge-soft-dark    { background: #f1f5f9!important; color: #334155!important; border: 1px solid rgba(51,65,85,0.12)!important; }
+
+/* ===================== UTILITY ===================== */
+.text-bna-blue  { color: var(--bna-blue) !important; }
+.text-bna-green { color: var(--bna-green) !important; }
+.bg-bna-blue    { background: var(--bna-blue) !important; }
+.bg-bna-green   { background: var(--bna-green) !important; }
+.bg-bna-gradient { background: var(--gradient-primary) !important; }
+
+/* Page section wrapper */
+.page-section {
+  padding: 2rem 0 3rem;
+}
+
+/* ===================== TABLE ===================== */
+.table thead th {
+  background: var(--bna-blue-soft);
+  color: var(--bna-blue);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: none;
+  padding: 1rem 1.25rem;
+}
+
+.table tbody tr {
+  transition: background 0.15s ease;
+  border-bottom: 1px solid var(--bna-border);
+}
+
+.table tbody tr:hover {
+  background: var(--bna-blue-mist);
+}
+
+.table tbody td {
+  padding: 1rem 1.25rem;
+  vertical-align: middle;
+  border: none;
+}
+
+/* ===================== SCROLLBAR ===================== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bna-bg); }
+::-webkit-scrollbar-thumb { background: rgba(43,57,144,0.25); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--bna-blue); }
+
+/* ===================== ANIMATION ===================== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* ===================== BNA STAT CARD ===================== */
+.bna-stat-card {
+  border: none !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 1.5rem;
+  background: white;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.bna-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  height: 4px; width: 100%;
+  background: var(--gradient-primary);
+}
+
+.bna-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ===================== ACTION CARD ===================== */
+.bna-action-card {
+  border: none !important;
+  border-radius: var(--radius-lg) !important;
+  background: white;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.bna-action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.bna-action-card .card-body { padding: 1.75rem; }
+
+.bna-action-card .card-footer-btn {
+  display: block;
+  width: 100%;
+  padding: 0.9rem;
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.bna-action-card .card-footer-btn:hover {
+  background: linear-gradient(135deg, #1a2472 0%, #111a5c 100%);
+}
+
+/* ===================== HEADER BRAND STRIP ===================== */
+.bna-brand-strip {
+  background: var(--gradient-primary);
+  color: white;
+  padding: 2rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.bna-brand-strip::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 40%;
+  background: url('assets/images/bna-logo.png') center/contain no-repeat;
+  opacity: 0.08;
+  mix-blend-mode: luminosity;
+}
+
+/* ===================== LOGIN BRAND SIDE ===================== */
+.bna-login-brand {
+  background: var(--gradient-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.bna-login-brand::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('assets/images/bna-logo.png') center/contain no-repeat;
+  opacity: 0.06;
+}
+
+/* Green accent bottom bar */
+.bna-bottom-accent {
+  height: 4px;
+  background: linear-gradient(90deg, var(--bna-blue) 0%, var(--bna-green) 50%, var(--bna-yellow) 100%);
+}
+
+/* ============================================================
+   BNA — RTL (RIGHT-TO-LEFT) SUPPORT & i18n
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
+
+[dir="rtl"] {
+  font-family: 'Cairo', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  text-align: right;
+}
+
+[dir="rtl"] .ms-1, [dir="rtl"] .ms-2, [dir="rtl"] .ms-3, [dir="rtl"] .ms-4 {
+  margin-right: unset !important;
+}
+[dir="rtl"] .me-1, [dir="rtl"] .me-2, [dir="rtl"] .me-3, [dir="rtl"] .me-4 {
+  margin-left: unset !important;
+}
+
+/* Margins & paddings fallback for Bootstrap in RTL */
+[dir="rtl"] .ms-auto {
+  margin-right: auto !important;
+  margin-left: 0 !important;
+}
+[dir="rtl"] .me-auto {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+[dir="rtl"] .ms-1 { margin-right: 0.25rem !important; margin-left: 0 !important; }
+[dir="rtl"] .ms-2 { margin-right: 0.5rem !important; margin-left: 0 !important; }
+[dir="rtl"] .ms-3 { margin-right: 1rem !important; margin-left: 0 !important; }
+[dir="rtl"] .ms-4 { margin-right: 1.5rem !important; margin-left: 0 !important; }
+[dir="rtl"] .me-1 { margin-left: 0.25rem !important; margin-right: 0 !important; }
+[dir="rtl"] .me-2 { margin-left: 0.5rem !important; margin-right: 0 !important; }
+[dir="rtl"] .me-3 { margin-left: 1rem !important; margin-right: 0 !important; }
+[dir="rtl"] .me-4 { margin-left: 1.5rem !important; margin-right: 0 !important; }
+
+/* Font size tweaks for Arabic readability */
+[dir="rtl"] body {
+  font-size: 0.95rem;
+}
+
+/* Border left indicators for RTL dashboard titles */
+[dir="rtl"] .fw-bold.mb-4 span {
+  border-left: none !important;
+  border-right: 4px solid #2B3990;
+  padding-left: 0 !important;
+  padding-right: 0.75rem;
+}
+
+/* RTL logo brand text spacing */
+[dir="rtl"] .logo-text, [dir="rtl"] .title-area {
+  text-align: right;
+}
+
+/* Chatbot RTL support */
+[dir="rtl"] .chat-wrapper {
+  left: 20px;
+  right: auto;
+}
+[dir="rtl"] .chat-messages {
+  text-align: right;
+}
+[dir="rtl"] .message-row {
+  justify-content: flex-start;
+}
+[dir="rtl"] .message-row.user {
+  justify-content: flex-end;
+}
+[dir="rtl"] .message-bubble {
+  border-radius: 16px 16px 0px 16px;
+  text-align: right;
+}
+[dir="rtl"] .message-row.user .message-bubble {
+  border-radius: 16px 16px 16px 0px;
+}
+[dir="rtl"] .bot-info {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .clear-btn {
+  margin-right: auto;
+  margin-left: 0;
+}
+[dir="rtl"] .quick-actions {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+}
+
+/* Navbar components in RTL */
+[dir="rtl"] .navbar-expand-lg .navbar-nav {
+  padding-right: 0;
+}
+
+/* Brand backgrounds mirror effects */
+[dir="rtl"] .bna-brand-strip::after {
+  left: 0; right: auto;
+}
+
+/* Custom dropdown menu style for language switcher */
+.lang-dropdown-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white !important;
+  border-radius: 50px;
+  padding: 0.45rem 1rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lang-dropdown-btn:hover, .lang-dropdown-btn:focus {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.15);
+}
+
+.lang-dropdown-menu {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--bna-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 0.5rem;
+  min-width: 140px;
+}
+
+.lang-dropdown-item {
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--bna-text);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lang-dropdown-item:hover {
+  background: var(--bna-blue-soft);
+  color: var(--bna-blue);
+}
+
+.lang-dropdown-item.active {
+  background: var(--bna-blue);
+  color: white;
+}
+
+/* Login/Signup brand side RTL swap */
+[dir="rtl"] .login-container {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .brand-side {
+  border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
+}
+[dir="rtl"] .form-side {
+  border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+}
+[dir="rtl"] .brand-accent-bar {
+  left: 0; right: auto;
+}
+[dir="rtl"] .login-card-accent {
+  right: 0; left: auto;
+}
+
+/* Wizard progress RTL swap */
+[dir="rtl"] .wizard-step {
+  text-align: right;
+}
+[dir="rtl"] .wizard-step::after {
+  left: -50%; right: auto;
+}
+

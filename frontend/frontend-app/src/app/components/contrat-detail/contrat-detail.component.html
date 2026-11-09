@@ -1,0 +1,809 @@
+<div *ngIf="data" class="container-fluid py-4 animate-fade-in" style="font-family: 'Outfit', sans-serif; background: #f8fafc; min-height: 100vh;">
+
+  <!-- Back Button & Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+        <i class="fas fa-file-contract text-primary"></i>
+        <span>Contrat d'Assurance</span>
+      </h2>
+      <p class="text-muted mb-0 small">Référence : <span class="fw-bold text-dark">{{ data.contrat.numero }}</span></p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <!-- ✅ Bouton téléchargement du contrat en PDF (branche downloadPdf()) -->
+      <button class="btn btn-primary px-3 py-2 rounded-3 fw-bold btn-sm shadow-sm d-flex align-items-center"
+              (click)="downloadPdf(data.contrat.id)" [disabled]="isGeneratingPdf">
+        <span *ngIf="isGeneratingPdf" class="spinner-border spinner-border-sm me-2"></span>
+        <i *ngIf="!isGeneratingPdf" class="fas fa-file-pdf me-2"></i>
+        {{ isGeneratingPdf ? 'Génération...' : 'Télécharger le contrat' }}
+      </button>
+      <span class="badge px-3 py-2 rounded-pill shadow-sm"
+            [ngClass]="{
+              'bg-success': data.contrat.statut === 'ACTIF',
+              'bg-danger': data.contrat.statut === 'RESILIE' || data.contrat.statut === 'EXPIRE',
+              'bg-warning text-dark': data.contrat.statut === 'EN_ATTENTE'
+            }" style="font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px;">
+        {{ data.contrat.statut === 'ACTIF' ? 'CONTRAT ACTIF' : data.contrat.statut }}
+      </span>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- ═══════════════════════ LEFT COLUMN ═══════════════════════ -->
+    <div class="col-lg-8">
+
+      <!-- General Characteristics Card -->
+      <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" style="background: white;">
+        <div class="p-4 border-bottom border-light d-flex align-items-center justify-content-between bg-light bg-opacity-50">
+          <h5 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
+            <i class="fas fa-info-circle text-primary"></i> Caractéristiques Générales
+          </h5>
+          <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold">{{ data.contrat.type }}</span>
+        </div>
+        <div class="card-body p-4">
+          <div class="row g-4">
+            <div class="col-md-6 col-xl-4">
+              <span class="text-muted small text-uppercase d-block mb-1">Formule souscrite</span>
+              <strong class="text-dark fs-5">{{ data.contrat.formule.replaceAll('_', ' ') }}</strong>
+            </div>
+            <div class="col-md-6 col-xl-4">
+              <span class="text-muted small text-uppercase d-block mb-1">Période de couverture</span>
+              <strong class="text-dark">{{ data.contrat.dateDebut | date:'dd MMM yyyy' }} – {{ data.contrat.dateFin | date:'dd MMM yyyy' }}</strong>
+            </div>
+
+            <div class="col-md-6 col-xl-4" *ngIf="data.contrat.riskLevel">
+              <span class="text-muted small text-uppercase d-block mb-1">Niveau de risque</span>
+              <span class="badge px-3 py-2 rounded-3 text-uppercase fw-bold shadow-sm"
+                    [ngClass]="{
+                      'bg-success text-white': data.contrat.riskLevel === 'FAIBLE',
+                      'bg-warning text-dark': data.contrat.riskLevel === 'MODÉRÉ' || data.contrat.riskLevel === 'MOYEN',
+                      'bg-danger text-white': data.contrat.riskLevel === 'ELEVÉ'
+                    }" style="font-size: 0.75rem;">
+                <i class="fas fa-shield-alt me-1"></i> {{ data.contrat.riskLevel }}
+              </span>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-top border-light d-flex gap-2" *ngIf="data.contrat.statut === 'ACTIF'">
+            <button class="btn btn-outline-primary px-4 py-2 rounded-3 fw-bold btn-sm" (click)="openRequestModal('MODIFICATION')">
+              <i class="fas fa-edit me-2"></i>Modifier mon contrat
+            </button>
+            <button class="btn btn-outline-danger px-4 py-2 rounded-3 fw-bold btn-sm" (click)="openRequestModal('RESILIATION')">
+              <i class="fas fa-trash-alt me-2"></i>Résilier mon contrat
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════
+           ✅ INFORMATIONS DE L'ASSURÉ (avec Date de fin)
+           ════════════════════════════════════════════════════ -->
+      <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" style="background: white;">
+        <div class="p-4 border-bottom border-light bg-light bg-opacity-50 d-flex align-items-center gap-2">
+          <div class="p-2 bg-primary bg-opacity-10 rounded-3 text-primary">
+            <i class="fas fa-user fa-lg"></i>
+          </div>
+          <h5 class="mb-0 fw-bold text-dark">Informations de l'assuré</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="row g-4">
+
+            <!-- Email -->
+            <div class="col-6 col-md-4 col-xl">
+              <span class="text-muted small text-uppercase d-block mb-1" style="font-size:0.72rem;">Adresse e-mail</span>
+              <strong class="text-dark">{{ data.userEmail || data.contrat.userEmail || '—' }}</strong>
+            </div>
+
+            <!-- CIN -->
+            <div class="col-6 col-md-4 col-xl">
+              <span class="text-muted small text-uppercase d-block mb-1" style="font-size:0.72rem;">CIN</span>
+              <strong class="text-dark">{{ data.userCin || data.contrat.userCin || '—' }}</strong>
+            </div>
+
+            <!-- Date d'effet (date de début) -->
+            <div class="col-6 col-md-4 col-xl">
+              <span class="text-muted small text-uppercase d-block mb-1" style="font-size:0.72rem;">Date d'effet</span>
+              <strong class="text-dark">{{ data.contrat.dateDebut | date:'dd MMM yyyy' }}</strong>
+            </div>
+
+            <!-- ✅ Date de fin (date d'expiration) -->
+            <div class="col-6 col-md-4 col-xl">
+              <span class="text-muted small text-uppercase d-block mb-1" style="font-size:0.72rem;">Date de fin</span>
+              <strong class="text-dark">{{ data.contrat.dateFin | date:'dd MMM yyyy' }}</strong>
+            </div>
+
+            <!-- Formule -->
+            <div class="col-6 col-md-4 col-xl">
+              <span class="text-muted small text-uppercase d-block mb-1" style="font-size:0.72rem;">Formule</span>
+              <strong class="text-dark text-uppercase">{{ data.contrat.formule?.replaceAll('_', ' ') }}</strong>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <!-- END Informations de l'assuré -->
+
+      <!-- ════════════════════════════════════════════════════
+           DURÉE & CALENDRIER DE PAIEMENT
+           Always visible — identical layout for every contract type
+           ════════════════════════════════════════════════════ -->
+      <div class="card border-0 shadow-lg rounded-4 mb-4 overflow-hidden"
+           style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white;">
+        <div class="card-body p-4">
+
+          <h6 class="fw-bold text-uppercase mb-4" style="font-size: 0.72rem; letter-spacing: 0.12em; opacity: 0.7;">
+            <i class="fas fa-calendar-alt me-2"></i>Durée &amp; Calendrier de Paiement
+          </h6>
+
+          <div class="row g-3 mb-3">
+
+            <!-- Date de début -->
+            <div class="col-6 col-md-3">
+              <div class="p-3 rounded-3 h-100" style="background: rgba(255,255,255,0.1);">
+                <small class="d-block text-uppercase mb-2" style="font-size: 0.62rem; letter-spacing: 0.06em; color: rgba(255,255,255,0.55);">Date de début</small>
+                <strong class="text-white" style="font-size: 0.95rem;">{{ data.contrat.dateDebut | date:'dd/MM/yyyy' }}</strong>
+              </div>
+            </div>
+
+            <!-- Date de fin -->
+            <div class="col-6 col-md-3">
+              <div class="p-3 rounded-3 h-100" style="background: rgba(255,255,255,0.1);">
+                <small class="d-block text-uppercase mb-2" style="font-size: 0.62rem; letter-spacing: 0.06em; color: rgba(255,255,255,0.55);">Date de fin</small>
+                <strong class="text-white" style="font-size: 0.95rem;">{{ data.contrat.dateFin | date:'dd/MM/yyyy' }}</strong>
+              </div>
+            </div>
+
+            <!-- Durée totale + restante -->
+            <div class="col-6 col-md-3">
+              <div class="p-3 rounded-3 h-100" style="background: rgba(255,255,255,0.1);">
+                <small class="d-block text-uppercase mb-2" style="font-size: 0.62rem; letter-spacing: 0.06em; color: rgba(255,255,255,0.55);">Durée totale</small>
+                <strong class="text-white d-block" style="font-size: 0.95rem;">
+                  <i class="fas fa-hourglass-half me-1" style="opacity:0.75;"></i>{{ data.contrat.duree }} an(s)
+                </strong>
+                <small class="mt-1 d-block" style="font-size: 0.7rem; color: rgba(255,255,255,0.45);">
+                  Restant : <span style="color: rgba(255,255,255,0.85);">{{ getRemainingDuration() }}</span>
+                </small>
+              </div>
+            </div>
+
+            <!-- Mode de paiement -->
+            <div class="col-6 col-md-3">
+              <div class="p-3 rounded-3 h-100"
+                   style="background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.22);">
+                <small class="d-block text-uppercase mb-2" style="font-size: 0.62rem; letter-spacing: 0.06em; color: rgba(255,255,255,0.55);">Mode de paiement</small>
+                <strong class="text-white d-block" style="font-size: 0.9rem;">
+                  <i class="fas fa-sync-alt me-1" style="opacity:0.8;"></i>
+                  <ng-container [ngSwitch]="data.contrat.frequencePaiement">
+                    <span *ngSwitchCase="'MENSUEL'">Mensuel</span>
+                    <span *ngSwitchCase="'TRIMESTRIEL'">Trimestriel</span>
+                    <span *ngSwitchCase="'SEMESTRIEL'">Semestriel</span>
+                    <span *ngSwitchCase="'ANNUEL'">Annuel</span>
+                    <span *ngSwitchDefault>{{ data.contrat.frequencePaiement }}</span>
+                  </ng-container>
+                </strong>
+                <small class="mt-1 d-block" style="font-size: 0.7rem; color: rgba(255,255,255,0.45);">
+                  <ng-container [ngSwitch]="data.contrat.frequencePaiement">
+                    <span *ngSwitchCase="'MENSUEL'">— chaque mois</span>
+                    <span *ngSwitchCase="'TRIMESTRIEL'">— tous les 3 mois</span>
+                    <span *ngSwitchCase="'SEMESTRIEL'">— tous les 6 mois</span>
+                    <span *ngSwitchCase="'ANNUEL'">— une fois par an</span>
+                  </ng-container>
+                </small>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Next payment date — full-width highlight bar -->
+          <div class="d-flex align-items-center justify-content-between p-3 rounded-3"
+               style="background: rgba(255,193,7,0.14); border: 1px solid rgba(255,193,7,0.38);">
+            <div>
+              <small class="d-block text-uppercase mb-1" style="font-size: 0.62rem; letter-spacing: 0.06em; color: rgba(255,255,255,0.55);">Prochaine échéance de paiement</small>
+              <strong class="text-warning" style="font-size: 1.15rem;">{{ data.contrat.dateProchainPaiement | date:'dd MMMM yyyy' }}</strong>
+            </div>
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
+              <i class="fas fa-bell me-1"></i>Rappel
+            </span>
+          </div>
+
+        </div>
+      </div>
+      <!-- END Duration & Payment Card -->
+
+      <!-- ════════════════════════════════════════════
+           OBJET ASSURÉ — per-type specific details
+           ════════════════════════════════════════════ -->
+
+      <!-- AUTO CONTRACT -->
+      <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" style="background: white;"
+           *ngIf="data.contrat.type === 'AUTO' && data.objets && data.objets.length > 0">
+        <div class="p-4 border-bottom border-light bg-light bg-opacity-50 d-flex align-items-center gap-2">
+          <div class="p-2 bg-primary bg-opacity-10 rounded-3 text-primary">
+            <i class="fas fa-car fa-lg"></i>
+          </div>
+          <h5 class="mb-0 fw-bold text-dark">Véhicule Assuré</h5>
+        </div>
+        <div class="card-body p-4">
+          <div *ngFor="let o of data.objets">
+            <div *ngIf="o.type === 'AUTO'">
+              <!-- Brand / model / plate -->
+              <div class="d-flex align-items-center gap-3 mb-4">
+                <div class="p-3 rounded-3" style="background: linear-gradient(135deg,#e8f0fe,#c5d9fb);">
+                  <i class="fas fa-car fa-2x text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="mb-1 fw-bold text-dark">{{ o.marque }} <span class="text-primary">{{ o.modele }}</span></h4>
+                  <span class="badge bg-dark px-3 py-2 rounded-3" style="font-family: monospace; font-size: 0.9rem; letter-spacing: 0.05em;">
+                    <i class="fas fa-id-card me-1"></i>{{ o.immatriculation }}
+                  </span>
+                </div>
+              </div>
+              <!-- Spec tiles -->
+              <div class="row g-3">
+                <div class="col-sm-6 col-md-4">
+                  <div class="p-3 rounded-3 border border-light" style="background:#f8fafc;">
+                    <span class="text-muted small d-block text-uppercase mb-1" style="font-size:0.68rem;">Âge du véhicule</span>
+                    <strong class="text-dark fs-5">{{ o.ageVehicule }} <small class="fw-normal text-muted">ans</small></strong>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                  <div class="p-3 rounded-3 border border-light" style="background:#f8fafc;">
+                    <span class="text-muted small d-block text-uppercase mb-1" style="font-size:0.68rem;">Puissance fiscale</span>
+                    <strong class="text-dark fs-5">{{ o.puissanceFiscale }} <small class="fw-normal text-muted">CV</small></strong>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                  <div class="p-3 rounded-3 border border-light" style="background:#f8fafc;">
+                    <span class="text-muted small d-block text-uppercase mb-1" style="font-size:0.68rem;">Puissance moteur</span>
+                    <strong class="text-dark fs-5">{{ o.puissanceMoteur }} <small class="fw-normal text-muted">ch</small></strong>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="p-3 rounded-3" style="background: linear-gradient(135deg,#e8f5e9,#f1f8e9); border: 1px solid #c8e6c9;">
+                    <span class="text-muted small d-block text-uppercase mb-1" style="font-size:0.68rem;">Valeur assurée du véhicule</span>
+                    <strong class="text-success" style="font-size: 1.6rem;">{{ o.valeurVehicule | number }} <small style="font-size:1rem;" class="fw-normal">TND</small></strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HABITATION CONTRACT -->
+      <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" style="background: white;"
+           *ngIf="data.contrat.type === 'HABITATION' && data.objets && data.objets.length > 0">
+        <div class="p-4 border-bottom border-light bg-light bg-opacity-50 d-flex align-items-center gap-2">
+          <div class="p-2 bg-primary bg-opacity-10 rounded-3 text-primary">
+            <i class="fas fa-home fa-lg"></i>
+          </div>
+          <h5 class="mb-0 fw-bold text-dark">Bien Immobilier Assuré</h5>
+        </div>
+        <div class="card-body p-4">
+          <div *ngFor="let o of data.objets">
+            <div *ngIf="o.type === 'HABITATION'">
+              <!-- Address header -->
+              <div class="d-flex align-items-center gap-3 mb-4">
+                <div class="p-3 rounded-3" style="background: linear-gradient(135deg,#e8f0fe,#c5d9fb);">
+                  <i class="fas fa-building fa-2x text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="mb-1 fw-bold text-dark">Bien Immobilier</h4>
+                  <span class="text-muted"><i class="fas fa-map-marker-alt me-1 text-danger"></i>{{ o.adresseBien || 'Adresse non renseignée' }}</span>
+                </div>
+              </div>
+              <div class="row g-3">
+                <div class="col-sm-6 col-md-4">
+                  <div class="p-3 rounded-3 border border-light" style="background:#f8fafc;">
+                    <span class="text-muted small d-block text-uppercase mb-1" style="font-size:0.68rem;">Âge du bâtiment</span>
+                    <strong class="text-dark fs-5">{{ o.ageBatiment }} <small class="fw-normal text-muted">ans</small></strong>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                  <div class="p-3 rounded-3 border border-light" style="background:#f8fafc;">
+                    <span class="text-muted small d-block text-uppercase mb-1" style="font-size:0.68rem;">Zone géographique</span>
+                    <strong class="text-dark">
+                      <span *ngIf="o.zoneGeo === 'URBAINE'"><i class="fas fa-city me-1 text-primary"></i>Urbaine</span>
+                      <span *ngIf="o.zoneGeo === 'RURALE'"><i class="fas fa-tree me-1 text-success"></i>Rurale</span>
+                      <span *ngIf="o.zoneGeo === 'RISQUE'"><i class="fas fa-exclamation-triangle me-1 text-danger"></i>Zone à risque</span>
+                      <span *ngIf="!o.zoneGeo" class="text-muted">—</span>
+                    </strong>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                  <div class="p-3 rounded-3 border border-light" style="background:#f8fafc;">
+                    <span class="text-muted small d-block text-uppercase mb-1" style="font-size:0.68rem;">Niveau de sécurité</span>
+                    <strong>
+                      <span *ngIf="o.niveauSecurite === 'BAS'" class="text-danger"><i class="fas fa-unlock me-1"></i>Bas</span>
+                      <span *ngIf="o.niveauSecurite === 'MOYEN'" class="text-warning"><i class="fas fa-lock-open me-1"></i>Moyen</span>
+                      <span *ngIf="o.niveauSecurite === 'HAUT'" class="text-success"><i class="fas fa-lock me-1"></i>Haut</span>
+                      <span *ngIf="!o.niveauSecurite" class="text-muted">—</span>
+                    </strong>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="p-3 rounded-3" style="background: linear-gradient(135deg,#e8f5e9,#f1f8e9); border: 1px solid #c8e6c9;">
+                    <span class="text-muted small d-block text-uppercase mb-1" style="font-size:0.68rem;">Valeur assurée du bien</span>
+                    <strong class="text-success" style="font-size: 1.6rem;">{{ o.valeurBien | number }} <small style="font-size:1rem;" class="fw-normal">TND</small></strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SANTE CONTRACT -->
+      <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" style="background: white;"
+           *ngIf="data.contrat.type === 'SANTE'">
+        <div class="p-4 border-bottom border-light bg-light bg-opacity-50 d-flex align-items-center gap-2">
+          <div class="p-2 rounded-3 text-danger" style="background: rgba(220,53,69,0.1);">
+            <i class="fas fa-heartbeat fa-lg"></i>
+          </div>
+          <h5 class="mb-0 fw-bold text-dark">Profil Assuré — Santé</h5>
+        </div>
+        <div class="card-body p-4">
+          <ng-container *ngIf="data.objets && data.objets.length > 0; else noSanteProfile">
+            <div *ngFor="let o of data.objets">
+              <div *ngIf="o.type === 'SANTE'">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                  <div class="p-3 rounded-circle d-flex align-items-center justify-content-center"
+                       style="background: linear-gradient(135deg, #ffe0e0, #ffb3b3); width:60px; height:60px;">
+                    <i class="fas fa-user-md fa-lg text-danger"></i>
+                  </div>
+                  <div>
+                    <h4 class="mb-0 fw-bold text-dark">Assuré Principal</h4>
+                    <span class="text-muted small">{{ o.ageAssure }} ans</span>
+                  </div>
+                </div>
+                <div class="row g-3">
+                  <div class="col-sm-6 col-md-4">
+                    <div class="p-3 rounded-3 border border-light" style="background:#f8fafc;">
+                      <span class="text-muted small d-block text-uppercase mb-1" style="font-size:0.68rem;">Âge de l'assuré</span>
+                      <strong class="text-dark fs-5">{{ o.ageAssure }} <small class="fw-normal text-muted">ans</small></strong>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-4">
+                    <div class="p-3 rounded-3 border border-light" style="background:#f8fafc;">
+                      <span class="text-muted small d-block text-uppercase mb-1" style="font-size:0.68rem;">Antécédents médicaux</span>
+                      <strong>
+                        <span *ngIf="o.antecedentsMedicaux === 'AUCUN'" class="text-success"><i class="fas fa-check-circle me-1"></i>Aucun</span>
+                        <span *ngIf="o.antecedentsMedicaux === 'CHRONIQUE'" class="text-warning"><i class="fas fa-exclamation-circle me-1"></i>Chronique</span>
+                        <span *ngIf="o.antecedentsMedicaux === 'GRAVE'" class="text-danger"><i class="fas fa-times-circle me-1"></i>Grave</span>
+                        <span *ngIf="!o.antecedentsMedicaux" class="text-muted">—</span>
+                      </strong>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-4">
+                    <div class="p-3 rounded-3 border border-light" style="background:#f8fafc;">
+                      <span class="text-muted small d-block text-uppercase mb-1" style="font-size:0.68rem;">Risque professionnel</span>
+                      <strong>
+                        <span *ngIf="o.profession === 'STANDARD'" class="text-success"><i class="fas fa-briefcase me-1"></i>Bas (bureau)</span>
+                        <span *ngIf="o.profession === 'RISQUE'" class="text-danger"><i class="fas fa-hard-hat me-1"></i>Élevé (terrain)</span>
+                        <span *ngIf="!o.profession" class="text-muted">—</span>
+                      </strong>
+                    </div>
+                  </div>
+                  <div class="col-12" *ngIf="o.specialitesMedicales && o.specialitesMedicales.length > 0">
+                    <div class="p-3 rounded-3 border border-light" style="background:#f8fafc;">
+                      <span class="text-muted small d-block text-uppercase mb-2" style="font-size:0.68rem;">Spécialités médicales couvertes</span>
+                      <div class="d-flex flex-wrap gap-2">
+                        <span *ngFor="let spec of o.specialitesMedicales"
+                              class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-normal">
+                          <i class="fas fa-stethoscope me-1"></i>{{ spec }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="p-3 rounded-3 d-flex align-items-center justify-content-between"
+                         [class.border-success]="o.couvertureHospitaliere"
+                         [class.border]="true"
+                         [class.border-light]="!o.couvertureHospitaliere"
+                         [style.background]="o.couvertureHospitaliere ? 'linear-gradient(135deg,#e8f5e9,#f1f8e9)' : '#f8fafc'">
+                      <div class="d-flex align-items-center gap-2">
+                        <i class="fas fa-hospital-alt fs-4" [class.text-success]="o.couvertureHospitaliere" [class.text-muted]="!o.couvertureHospitaliere"></i>
+                        <div>
+                          <span class="fw-bold d-block" [class.text-success]="o.couvertureHospitaliere" [class.text-muted]="!o.couvertureHospitaliere">
+                            Couverture Chirurgicale &amp; Hospitalière
+                          </span>
+                          <small class="text-muted">Séjours, opérations et interventions lourdes</small>
+                        </div>
+                      </div>
+                      <span class="badge rounded-pill px-3 py-2" [class.bg-success]="o.couvertureHospitaliere" [class.bg-secondary]="!o.couvertureHospitaliere">
+                        {{ o.couvertureHospitaliere ? 'INCLUS' : 'NON INCLUS' }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <ng-template #noSanteProfile>
+            <p class="text-muted mb-0"><i class="fas fa-info-circle me-2"></i>Aucun profil de santé enregistré pour ce contrat.</p>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- VIE / PRÉVOYANCE CONTRACT -->
+      <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" style="background: white;"
+           *ngIf="data.contrat.type === 'VIE'">
+        <div class="p-4 border-bottom border-light bg-light bg-opacity-50 d-flex align-items-center gap-2">
+          <div class="p-2 rounded-3" style="background: rgba(103,58,183,0.1); color: #673ab7;">
+            <i class="fas fa-user-shield fa-lg"></i>
+          </div>
+          <h5 class="mb-0 fw-bold text-dark">Profil Assuré — Prévoyance Vie</h5>
+        </div>
+        <div class="card-body p-4">
+          <ng-container *ngIf="data.objets && data.objets.length > 0; else noVieProfile">
+            <div *ngFor="let o of data.objets">
+              <div *ngIf="o.type === 'VIE'">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                  <div class="p-3 rounded-circle d-flex align-items-center justify-content-center"
+                       style="background: linear-gradient(135deg,#ede7f6,#d1c4e9); width:60px; height:60px;">
+                    <i class="fas fa-user-shield fa-lg" style="color:#673ab7;"></i>
+                  </div>
+                  <div>
+                    <h4 class="mb-0 fw-bold text-dark">Assuré Principal</h4>
+                    <span class="text-muted small">{{ o.ageAssure }} ans</span>
+                  </div>
+                </div>
+                <div class="row g-3">
+                  <div class="col-sm-6 col-md-4">
+                    <div class="p-3 rounded-3 border border-light" style="background:#f8fafc;">
+                      <span class="text-muted small d-block text-uppercase mb-1" style="font-size:0.68rem;">Âge de l'assuré</span>
+                      <strong class="text-dark fs-5">{{ o.ageAssure }} <small class="fw-normal text-muted">ans</small></strong>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-4">
+                    <div class="p-3 rounded-3 border border-light" style="background:#f8fafc;">
+                      <span class="text-muted small d-block text-uppercase mb-1" style="font-size:0.68rem;">État de santé</span>
+                      <strong>
+                        <span *ngIf="o.etatSante === 'BON'" class="text-success"><i class="fas fa-heart me-1"></i>Bon</span>
+                        <span *ngIf="o.etatSante === 'FRAGILE'" class="text-warning"><i class="fas fa-heart-broken me-1"></i>Fragile</span>
+                        <span *ngIf="!o.etatSante" class="text-muted">—</span>
+                      </strong>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="p-3 rounded-3" style="background: linear-gradient(135deg,#ede7f6,#f3e5f5); border: 1px solid #ce93d8;">
+                      <span class="text-muted small d-block text-uppercase mb-1" style="font-size:0.68rem;">Capital assuré</span>
+                      <strong style="font-size: 1.6rem; color: #673ab7;">{{ o.capitalAssure | number }} <small style="font-size:1rem;" class="fw-normal text-muted">TND</small></strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <ng-template #noVieProfile>
+            <p class="text-muted mb-0"><i class="fas fa-info-circle me-2"></i>Aucun profil enregistré pour ce contrat.</p>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Guarantees List — always visible -->
+      <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" style="background: white;">
+        <div class="p-4 border-bottom border-light bg-light bg-opacity-50">
+          <h5 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
+            <i class="fas fa-lock text-primary"></i> Garanties incluses
+          </h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="row g-3">
+            <div class="col-md-6" *ngFor="let g of data.garanties">
+              <div class="d-flex align-items-center justify-content-between p-3 rounded-3 border border-light bg-light bg-opacity-25 hover-translate">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="fas fa-check-circle text-success fs-5"></i>
+                  <span class="fw-bold text-dark small text-uppercase">{{ g.nom }}</span>
+                </div>
+                <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm" style="font-size: 0.8rem;">
+                  {{ g.plafond | number:'1.0-0' }} DT
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- END LEFT COLUMN -->
+
+    <!-- ═══════════════════════ RIGHT COLUMN ═══════════════════════ -->
+    <div class="col-lg-4">
+
+      <!-- Cotisation Payment Card -->
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-4"
+           style="background: linear-gradient(145deg, #1e3c72 0%, #2a5298 100%); color: white;">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <span class="text-white-50 small text-uppercase fw-bold">Cotisation Annuelle</span>
+              <h2 class="fw-black mb-0 text-white mt-1" style="font-size: 2.2rem; font-weight: 800;">
+                {{ data.contrat.prime | number }} <span style="font-size: 1.2rem; font-weight: 500;">TND</span>
+              </h2>
+            </div>
+            <span class="badge px-3 py-2 rounded-pill"
+                  [ngClass]="{
+                    'bg-success': data.contrat.etatPaiement === 'A_JOUR',
+                    'bg-warning text-dark': data.contrat.etatPaiement !== 'A_JOUR'
+                  }" style="font-size: 0.75rem; font-weight: bold; letter-spacing: 0.5px;">
+              <i class="fas me-1" [ngClass]="data.contrat.etatPaiement === 'A_JOUR' ? 'fa-check-circle' : 'fa-exclamation-circle'"></i>
+              {{ data.contrat.etatPaiement === 'A_JOUR' ? 'RÉGLÉ' : 'EN ATTENTE' }}
+            </span>
+          </div>
+
+          <p class="text-white-50 small mb-4">
+            Mode : <span class="text-white fw-bold">{{ data.contrat.modePaiement || 'Carte bancaire' }}</span>
+            <br>
+            Prochaine échéance : <span class="text-white fw-bold">{{ data.contrat.dateProchainPaiement | date:'dd MMMM yyyy' }}</span>
+          </p>
+
+          <!-- State 1: A_JOUR (Paid) -->
+          <div *ngIf="data.contrat.etatPaiement === 'A_JOUR'" class="p-3 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="bg-success rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                <i class="fas fa-check text-white" style="font-size: 0.75rem;"></i>
+              </div>
+              <span class="fw-bold text-white small">Cotisation réglée</span>
+            </div>
+            <p class="small text-white-50 mb-3" *ngIf="isUser">Votre reçu officiel de paiement est disponible en téléchargement immédiat.</p>
+            <p class="small text-white-50 mb-3" *ngIf="isGestionnaire">La cotisation annuelle a été payée en ligne avec succès par l'assuré.</p>
+            <button *ngIf="isUser" class="btn btn-light w-100 py-3 fw-bold text-primary shadow" style="border-radius: 12px;" (click)="downloadReceipt()">
+              <i class="fas fa-file-invoice me-2"></i>Télécharger mon reçu (PDF)
+            </button>
+          </div>
+
+          <!-- State 2: EN_ATTENTE (Pending Payment) -->
+          <div *ngIf="data.contrat.etatPaiement !== 'A_JOUR'" class="p-3 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="bg-warning rounded-circle p-1 d-flex align-items-center justify-content-center text-dark" style="width: 24px; height: 24px;">
+                <i class="fas fa-exclamation text-dark" style="font-size: 0.75rem; font-weight: 900;"></i>
+              </div>
+              <span class="fw-bold text-white small">Règlement en attente</span>
+            </div>
+            <p class="small text-white-50 mb-3" *ngIf="isUser">Votre dossier nécessite la validation de votre cotisation pour maintenir les garanties actives.</p>
+            <p class="small text-white-50 mb-3" *ngIf="isGestionnaire">Le paiement de la cotisation par le client est actuellement en attente de règlement.</p>
+            <button *ngIf="isUser" class="btn btn-warning w-100 py-3 fw-bold text-dark shadow" style="border-radius: 12px;" (click)="openPaymentModal()">
+              <i class="fas fa-credit-card me-2"></i>Régler ma cotisation
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Quick Assistance Banner -->
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden p-4 bg-white">
+        <h5 class="fw-bold text-dark mb-3"><i class="fas fa-headset text-primary me-1"></i> Besoin d'aide ?</h5>
+        <p class="text-muted small">Nos conseillers Assurances sont à votre écoute pour toute question relative aux garanties de votre contrat.</p>
+        <a href="tel:123456" class="btn btn-outline-secondary w-100 py-2 rounded-3 fw-bold small text-decoration-none">
+          <i class="fas fa-phone-alt me-2 text-primary"></i>Contacter le support
+        </a>
+      </div>
+
+    </div>
+    <!-- END RIGHT COLUMN -->
+
+  </div>
+
+  <!-- ═══════════════════════ MODAL: MODIFICATION / RÉSILIATION ═══════════════════════ -->
+  <div *ngIf="showRequestModal" class="modal-overlay">
+    <div class="modal-container glass-modal">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          <i [class]="requestType === 'MODIFICATION' ? 'fas fa-edit' : 'fas fa-times-circle'"></i>
+          Demande de {{ requestType === 'MODIFICATION' ? 'Modification' : 'Résiliation' }}
+        </h4>
+        <button class="close-btn" (click)="showRequestModal = false">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div *ngIf="requestType === 'MODIFICATION'" class="modification-fields">
+          <div class="alert alert-info border-0 shadow-sm" style="background: rgba(13, 202, 240, 0.1); color: #055160;">
+            <i class="fas fa-info-circle me-2"></i>
+            Vous pouvez modifier les caractéristiques techniques et la formule de votre contrat. Toute modification peut impacter votre prime annuelle.
+          </div>
+
+          <!-- Auto Specific Fields -->
+          <div *ngIf="data.contrat.type === 'AUTO'">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group mb-3">
+                  <label class="form-label fw-bold small text-uppercase">Marque</label>
+                  <input type="text" [(ngModel)]="modifiedMarque" class="form-control glass-input" placeholder="Ex: Volkswagen">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group mb-3">
+                  <label class="form-label fw-bold small text-uppercase">Modèle</label>
+                  <input type="text" [(ngModel)]="modifiedModele" class="form-control glass-input" placeholder="Ex: Golf 8">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group mb-3">
+                  <label class="form-label fw-bold small text-uppercase">Immatriculation</label>
+                  <input type="text" [(ngModel)]="modifiedImmatriculation" class="form-control glass-input" placeholder="Ex: 220 TUN 1234">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group mb-3">
+                  <label class="form-label fw-bold small text-uppercase">Valeur (TND)</label>
+                  <div class="input-group">
+                    <input type="number" [(ngModel)]="modifiedValeur" class="form-control glass-input" placeholder="Nouvelle valeur">
+                    <span class="input-group-text bg-transparent border-start-0">DT</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group mb-3">
+                  <label class="form-label fw-bold small text-uppercase">Puissance (CV)</label>
+                  <div class="input-group">
+                    <input type="number" [(ngModel)]="modifiedPuissance" class="form-control glass-input" placeholder="Puissance">
+                    <span class="input-group-text bg-transparent border-start-0">CV</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group mb-3">
+                  <label class="form-label fw-bold small text-uppercase">Âge du véhicule</label>
+                  <div class="input-group">
+                    <input type="number" [(ngModel)]="modifiedAge" class="form-control glass-input" placeholder="Âge">
+                    <span class="input-group-text bg-transparent border-start-0">ans</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Habitation Specific Fields -->
+          <div *ngIf="data.contrat.type === 'HABITATION'">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label class="form-label fw-bold small text-uppercase">Valeur du bien (TND)</label>
+                  <input type="number" [(ngModel)]="modifiedValeurBien" class="form-control glass-input" placeholder="Ex: 250000">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label class="form-label fw-bold small text-uppercase">Niveau de Sécurité</label>
+                  <select [(ngModel)]="modifiedNiveauSecurite" class="form-select glass-input">
+                    <option value="BAS">Bas (Minimum)</option>
+                    <option value="MOYEN">Moyen (Standard)</option>
+                    <option value="HAUT">Haut (Alarme + Caméras)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Formula Selection (Dynamic) -->
+          <div class="form-group mb-3">
+            <label class="form-label fw-bold small text-uppercase">Formule d'Assurance</label>
+            <select [(ngModel)]="modifiedFormule" class="form-select glass-input">
+              <ng-container *ngIf="data.contrat.type === 'AUTO'">
+                <option value="TIERS_SIMPLE">Tiers Simple (Essentiel)</option>
+                <option value="TIERS_ETENDU">Tiers Étendu (Sécurité)</option>
+                <option value="TOUS_RISQUES">Tous Risques (Complet)</option>
+                <option value="TOUS_RISQUES_PREMIUM">Tous Risques Premium (Maximal)</option>
+              </ng-container>
+              <ng-container *ngIf="data.contrat.type === 'HABITATION' || data.contrat.type === 'SANTE' || data.contrat.type === 'VIE'">
+                <option value="BASIQUE">Basique / Essentielle</option>
+                <option value="MOYENNE">Moyenne / Standard</option>
+                <option value="PREMIUM">Premium / Optimale</option>
+              </ng-container>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="form-label fw-bold small text-uppercase">Justification Détaillée</label>
+          <textarea [(ngModel)]="requestDescription" class="form-control glass-input" rows="3"
+                    placeholder="Veuillez expliquer pourquoi vous demandez ces modifications..."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer border-0">
+        <button class="btn btn-link text-muted text-decoration-none me-3" (click)="showRequestModal = false">Annuler</button>
+        <button class="btn btn-primary px-4 py-2" style="border-radius: 12px; background: linear-gradient(135deg, #0061ff 0%, #60efff 100%); border: none;"
+                (click)="submitRequest()" [disabled]="!requestDescription">
+          <i class="fas fa-paper-plane me-2"></i> Envoyer la demande
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ MODAL: PAIEMENT ═══════════════════════ -->
+  <div *ngIf="showPaymentModal" class="modal-overlay">
+    <div class="modal-container glass-modal" style="width: 480px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+        <h4 class="modal-title">
+          <i class="fas fa-credit-card me-2"></i>
+          Paiement sécurisé
+        </h4>
+        <button class="close-btn" (click)="showPaymentModal = false">&times;</button>
+      </div>
+
+      <div class="modal-body p-4">
+        <!-- Success State -->
+        <div *ngIf="paymentSuccess" class="text-center py-4">
+          <div class="mb-3 text-success">
+            <i class="fas fa-check-circle fa-4x animate-bounce"></i>
+          </div>
+          <h4 class="fw-bold text-success">Paiement Réussi !</h4>
+          <p class="text-muted small">Votre contrat <strong>{{ data.contrat.numero }}</strong> est désormais à jour.</p>
+
+          <div class="mt-4 p-3 rounded bg-light border" style="color: #333;">
+            <p class="mb-1 text-uppercase fw-bold text-muted small">Montant réglé</p>
+            <h3 class="fw-bold text-primary">{{ data.contrat.prime }} TND</h3>
+          </div>
+
+          <div class="d-grid gap-2 mt-4">
+            <button class="btn btn-success py-3" style="border-radius: 12px; font-weight: bold;" (click)="downloadReceipt()">
+              <i class="fas fa-file-download me-2"></i> Télécharger mon reçu
+            </button>
+            <button class="btn btn-outline-secondary py-2" (click)="showPaymentModal = false">
+              Fermer
+            </button>
+          </div>
+        </div>
+
+        <!-- Checkout Form State -->
+        <div *ngIf="!paymentSuccess" style="color: #333;">
+          <div class="d-flex justify-content-between align-items-center mb-4 p-3 rounded" style="background: rgba(30, 60, 114, 0.05);">
+            <div>
+              <span class="text-muted small text-uppercase fw-bold">Cotisation à payer</span>
+              <h4 class="mb-0 fw-bold text-primary">{{ data.contrat.prime }} TND</h4>
+            </div>
+            <div class="text-end">
+              <span class="badge bg-primary px-3 py-2" style="border-radius: 20px;">{{ data.contrat.type }}</span>
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label fw-bold small text-muted text-uppercase">Nom du titulaire</label>
+            <input type="text" [(ngModel)]="cardHolder" class="form-control glass-input" placeholder="Ex: Mohamed Ben Ali">
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label fw-bold small text-muted text-uppercase">Numéro de carte</label>
+            <div class="input-group">
+              <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="fas fa-credit-card"></i></span>
+              <input type="text" [(ngModel)]="cardNumber" class="form-control glass-input border-start-0" placeholder="XXXX XXXX XXXX XXXX">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label fw-bold small text-muted text-uppercase">Date d'expiration</label>
+                <input type="text" [(ngModel)]="cardExpiry" class="form-control glass-input" placeholder="MM/AA">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label fw-bold small text-muted text-uppercase">Code CVV</label>
+                <input type="password" [(ngModel)]="cardCvv" class="form-control glass-input" placeholder="123" maxlength="3">
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-center gap-2 mt-3 text-muted small">
+            <i class="fas fa-lock text-success"></i> Connexion SSL 256 bits sécurisée
+          </div>
+
+          <div class="d-grid mt-4">
+            <button class="btn btn-primary py-3 fw-bold" style="border-radius: 12px; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); border: none;"
+                    (click)="payPremium()" [disabled]="isPaying || !cardNumber || !cardExpiry || !cardCvv || !cardHolder">
+              <span *ngIf="isPaying" class="spinner-border spinner-border-sm me-2"></span>
+              <span *ngIf="!isPaying"><i class="fas fa-shield-alt me-2"></i> Confirmer le paiement</span>
+              <span *ngIf="isPaying">Traitement sécurisé...</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

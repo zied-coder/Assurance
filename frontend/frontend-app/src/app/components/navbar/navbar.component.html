@@ -1,0 +1,80 @@
+<nav class="navbar navbar-expand-lg navbar-dark bna-navbar" *ngIf="!shouldHideNavbar()">
+  <div class="container">
+
+    <!-- BRAND / LOGO -->
+    <a class="navbar-brand d-flex align-items-center gap-2" [routerLink]="getDashboardLink()">
+      <img src="assets/images/bna-logo.png" alt="Assurances Logo" height="40"
+           style="border-radius:8px; object-fit:contain; width:40px; border:2px solid rgba(255,255,255,0.25); background:white; padding:2px;">
+      <div class="d-flex flex-column lh-1">
+        <span class="fw-800 fs-6 text-white" style="font-weight:800; letter-spacing:-0.3px;">Assurances</span>
+      </div>
+    </a>
+
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            style="box-shadow:none;">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto ms-4">
+        <li class="nav-item">
+          <a class="nav-link fw-600 px-3 py-2 rounded-pill"
+             style="font-weight:600; transition:all 0.2s ease;"
+             [routerLink]="getDashboardLink()"
+             routerLinkActive="active">
+            <i class="bi bi-grid-1x2-fill me-1"></i> {{ 'navbar.dashboard' | translate }}
+          </a>
+        </li>
+      </ul>
+
+      <div class="d-flex align-items-center gap-3" *ngIf="isLoggedIn()">
+        <!-- Language Switcher Dropdown -->
+        <div class="position-relative">
+          <button class="lang-dropdown-btn" (click)="toggleLangDropdown()">
+            <i class="bi bi-globe"></i>
+            <span>{{ getLanguageLabel(translationService.currentLang()) }}</span>
+            <i class="bi bi-chevron-down" style="font-size:0.75rem;"></i>
+          </button>
+          
+          <div class="dropdown-menu lang-dropdown-menu show" *ngIf="isLangDropdownOpen" 
+               [style.position]="'absolute'" 
+               [style.right]="translationService.currentLang() === 'ar' ? 'auto' : '0'" 
+               [style.left]="translationService.currentLang() === 'ar' ? '0' : 'auto'">
+            <div class="lang-dropdown-item" [class.active]="translationService.currentLang() === 'fr'" (click)="selectLanguage('fr')">
+              <span>🇫🇷</span> Français
+            </div>
+            <div class="lang-dropdown-item" [class.active]="translationService.currentLang() === 'en'" (click)="selectLanguage('en')">
+              <span>🇬🇧</span> English
+            </div>
+            <div class="lang-dropdown-item" [class.active]="translationService.currentLang() === 'ar'" (click)="selectLanguage('ar')">
+              <span>🇹🇳</span> العربية
+            </div>
+          </div>
+        </div>
+
+        <!-- User info chip -->
+        <div class="d-flex align-items-center gap-2"
+             style="background:rgba(255,255,255,0.12); border-radius:50px; padding:0.4rem 1rem 0.4rem 0.5rem; border:1px solid rgba(255,255,255,0.15);">
+          <div style="width:32px; height:32px; border-radius:50%; background:var(--bna-green); display:flex; align-items:center; justify-content:center;">
+            <i class="bi bi-person-fill text-white" style="font-size:0.9rem;"></i>
+          </div>
+          <span class="text-white fw-600" style="font-size:0.875rem;">
+            {{ authService.getUser()?.username || ('login.title_user' | translate) }}
+          </span>
+        </div>
+
+        <!-- Logout button -->
+        <button class="btn btn-sm fw-600 px-3 py-2"
+                style="background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.25); border-radius:50px; transition:all 0.2s ease; font-size:0.85rem;"
+                (click)="logout()"
+                onmouseover="this.style.background='rgba(255,255,255,0.25)'"
+                onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+          <i class="bi bi-box-arrow-right me-1"></i> {{ 'common.logout' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom accent line -->
+  <div class="bna-bottom-accent" style="position:absolute; bottom:0; left:0; right:0; height:3px;"></div>
+</nav>

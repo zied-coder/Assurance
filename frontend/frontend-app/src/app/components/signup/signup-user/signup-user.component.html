@@ -1,0 +1,84 @@
+<div class="container py-5" style="max-width: 550px;">
+  <div class="card card-dashboard p-4 animate-slide-up">
+    <div class="text-center mb-4">
+      <img src="assets/images/bna-logo.png" alt="Assurances" style="height:55px; border-radius:12px; object-fit:contain; width:55px; border:2px solid #e2e6f3; background:white; padding:4px;" class="mb-3">
+      <h2 class="fw-bold text-bna-blue mb-1">{{ 'signup.register' | translate }}</h2>
+      <p class="text-muted small mb-0">{{ 'signup.register_subtitle' | translate }} ({{ 'login.title_user' | translate }})</p>
+    </div>
+
+    <form (ngSubmit)="signup()" #signupForm="ngForm">
+      
+      <!-- USERNAME -->
+      <div class="form-group mb-3">
+        <label class="form-label fw-600 small">{{ 'signup.username' | translate }}</label>
+        <input type="text" class="form-control"
+               [(ngModel)]="username" name="username" required
+               placeholder="votre.nom">
+      </div>
+
+      <!-- EMAIL -->
+      <div class="form-group mb-3">
+        <label class="form-label fw-600 small">Email</label>
+        <input type="email" class="form-control"
+               [(ngModel)]="email" name="email" required
+               placeholder="nom@exemple.com">
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="form-group mb-3">
+        <label class="form-label fw-600 small">{{ 'login.password' | translate }}</label>
+        <input type="password" class="form-control"
+               [(ngModel)]="password" name="password" required
+               placeholder="••••••••">
+      </div>
+
+      <div class="row">
+        <!-- CIN -->
+        <div class="col-md-6 form-group mb-3">
+          <label class="form-label fw-600 small">CIN</label>
+          <input type="text" class="form-control"
+                 [(ngModel)]="cin" name="cin" required
+                 placeholder="01234567">
+        </div>
+
+        <!-- PHONE -->
+        <div class="col-md-6 form-group mb-3">
+          <label class="form-label fw-600 small">Téléphone</label>
+          <input type="text" class="form-control"
+                 [(ngModel)]="phone" name="phone" required
+                 placeholder="+216 20 000 000">
+        </div>
+      </div>
+
+      <!-- ADDRESS -->
+      <div class="form-group mb-4">
+        <label class="form-label fw-600 small">Adresse</label>
+        <input type="text" class="form-control"
+               [(ngModel)]="address" name="address" required
+               placeholder="Tunis, Tunisie">
+      </div>
+
+      <!-- BUTTON -->
+      <button type="submit" class="btn btn-bna w-100 py-2.5 mb-3">
+        {{ 'signup.btn_register' | translate }}
+      </button>
+
+      <!-- ERROR -->
+      <div *ngIf="errorMessage" class="alert alert-danger py-2 text-center small mb-3 animate-fade-in">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+      </div>
+
+    </form>
+
+    <div class="text-center mt-2 border-top pt-3">
+      <span class="text-muted small">{{ 'signup.already_client' | translate }} </span>
+      <a routerLink="/login/user" class="fw-bold text-bna-blue text-decoration-none small">{{ 'signup.connect_now' | translate }}</a>
+    </div>
+
+    <div class="text-center mt-3">
+      <a routerLink="/" class="text-muted small text-decoration-none" style="font-size:0.82rem;">
+        <i class="bi bi-house-door me-1"></i> {{ 'common.back_to_home' | translate }}
+      </a>
+    </div>
+  </div>
+</div>

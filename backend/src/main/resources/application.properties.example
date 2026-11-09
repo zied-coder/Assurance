@@ -1,0 +1,19 @@
+
+server.port=8082
+spring.application.name=demo
+
+# MongoDB
+spring.jackson.serialization.write-dates-as-timestamps=false
+spring.data.mongodb.uri=mongodb://localhost:27017/bna_assurance
+
+# Google Maps
+google.maps.api.key=YOUR_GOOGLE_MAPS_API_KEY
+
+# OpenAI API
+#OPENAI_API_KEY=YOUR_OPENAI_API_KEY
+#llm.base.url=https://api.openai.com/v1
+#llm.model=gpt-4o
+llm.base.url=https://api.groq.com/openai/v1
+
+OPENAI_API_KEY=YOUR_API_KEY
+llm.model=openai/gpt-oss-120b

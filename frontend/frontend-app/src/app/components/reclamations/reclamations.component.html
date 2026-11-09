@@ -1,0 +1,243 @@
+<!-- HEADER SECTION -->
+<div class="bg-white border-bottom mb-4">
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h2 class="fw-bold mb-1 text-dark"><i class="bi bi-chat-dots-fill text-primary me-2"></i>Complaints & Appeals</h2>
+        <p class="text-muted mb-0">We are here to listen and resolve your disputes professionally</p>
+      </div>
+      <div *ngIf="isUser">
+        <button class="btn btn-primary btn-lg rounded-pill px-4 fw-bold shadow-sm animate-fade-in" (click)="showForm = !showForm">
+          <i class="bi bi-plus-lg me-2"></i>New Complaint
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container pb-5">
+  
+  <!-- KPI / STATS (Optional but good for consistency) -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      <div class="card card-custom p-4 border-0 shadow-sm">
+        <h6 class="text-muted small fw-bold text-uppercase mb-1">Dossiers soumis</h6>
+        <h3 class="fw-bold mb-0 text-dark">{{ reclamations.length }}</h3>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card card-custom p-4 border-0 shadow-sm">
+        <h6 class="text-muted small fw-bold text-uppercase mb-1">En cours de traitement</h6>
+        <h3 class="fw-bold mb-0 text-primary">{{ reclamationsNonResolues().length }}</h3>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card card-custom p-4 border-0 shadow-sm">
+        <h6 class="text-muted small fw-bold text-uppercase mb-1">Litiges résolus</h6>
+        <h3 class="fw-bold mb-0 text-success">{{ reclamationsParStatut(['RESOLVED']).length }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORMULAIRE DE CRÉATION (CLIENT) -->
+  <div *ngIf="showForm" class="card border-0 shadow-sm mb-5 rounded-4 overflow-hidden animate-fade-in bg-white" style="border: 1px solid #e2e8f0 !important;">
+    <div class="bg-light p-4 border-bottom d-flex align-items-center gap-3">
+      <div class="icon-box bg-primary bg-opacity-10 text-primary" style="width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+        <i class="bi fs-4 bi-pencil-square"></i>
+      </div>
+      <div>
+        <h4 class="fw-bold mb-0 text-dark">Submit a Complaint</h4>
+        <span class="text-muted small">Please provide the details of your request</span>
+      </div>
+    </div>
+    <div class="card-body p-4 p-md-5">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <label class="form-label fw-bold text-muted small text-uppercase">Complaint Subject</label>
+          <input type="text" class="form-control form-control-lg bg-light border-0 shadow-sm rounded-3" [(ngModel)]="newRec.titre" placeholder="e.g., Dispute regarding compensation">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-bold text-muted small text-uppercase">Category</label>
+          <select class="form-select form-select-lg bg-light border-0 shadow-sm rounded-3" [(ngModel)]="newRec.type">
+            <option value="DELAY">Processing Delay</option>
+            <option value="DISPUTE">Decision Dispute</option>
+            <option value="PAYMENT_ISSUE">Payment Issue</option>
+            <option value="OTHER">Other Reason</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-bold text-muted small text-uppercase">Linked Claim (Traceability)</label>
+          <select class="form-select form-select-lg bg-light border-0 shadow-sm rounded-3" [(ngModel)]="newRec.sinistreId">
+            <option value="">-- Select related claim (if any) --</option>
+            <option *ngFor="let s of getUnprocessedSinistres()" [value]="s.id">
+              {{ s.numero }} - {{ s.titre }} ({{ s.statut }})
+            </option>
+          </select>
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-bold text-muted small text-uppercase">Detailed Explanation</label>
+          <textarea class="form-control bg-light border-0 shadow-sm rounded-3 p-3" rows="5" [(ngModel)]="newRec.description" placeholder="Please thoroughly describe the issue you encountered..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer bg-white p-4 d-flex justify-content-end gap-3 border-top">
+      <button class="btn btn-light rounded-pill px-5 fw-bold text-dark border shadow-sm" (click)="showForm = false">Cancel</button>
+      <button class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm" (click)="createReclamation()">Submit Request</button>
+    </div>
+  </div>
+
+  <!-- LIST OF RECLAMATIONS (CARD GRID) -->
+  <div class="mb-5 animate-fade-in">
+    <div class="d-flex align-items-center gap-2 mb-4">
+      <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary"><i class="bi bi-chat-square-text-fill fs-5"></i></div>
+      <h4 class="fw-bold mb-0 text-dark">Your Complaints</h4>
+    </div>
+
+    <div class="row g-4" *ngIf="reclamations.length > 0; else emptyReclamations">
+      <div class="col-lg-6 col-xl-4" *ngFor="let r of reclamations">
+        <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden bg-white hover-lift" style="transition: transform 0.2s, box-shadow 0.2s;">
+          <div class="card-body p-4 position-relative">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <span class="badge rounded-pill px-3 py-1 small fw-bold mb-2" [ngClass]="{
+                  'bg-primary text-white': r.statut === 'SUBMITTED',
+                  'bg-warning text-dark': r.statut === 'UNDER_REVIEW' || r.statut === 'IN_PROGRESS',
+                  'bg-success text-white': r.statut === 'RESOLVED',
+                  'bg-danger text-white': r.statut === 'REJECTED'
+                }">
+                  {{ r.statut }}
+                </span>
+                <h5 class="fw-bold text-dark mb-1 text-truncate" style="max-width: 250px;">{{ r.titre }}</h5>
+                <span class="text-muted small border px-2 py-1 rounded-pill">{{ r.type }}</span>
+              </div>
+            </div>
+            
+            <div class="mb-3 d-flex flex-column gap-1 small text-muted">
+              <div><i class="bi bi-envelope-fill text-secondary me-2"></i>{{ r.userEmail }}</div>
+              <div *ngIf="r.sinistreNumero"><i class="bi bi-link-45deg text-primary me-2"></i>Ref: {{ r.sinistreNumero }}</div>
+              <div><i class="bi bi-calendar-event text-info me-2"></i>{{ r.dateCreation | date:'mediumDate' }}</div>
+            </div>
+          </div>
+          <div class="card-footer bg-light p-3 border-top d-flex gap-2 justify-content-end align-items-center">
+             <button class="btn btn-sm btn-white fw-bold border shadow-sm rounded-pill px-4 text-dark bg-white w-100" (click)="viewDetails(r)">View Details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <ng-template #emptyReclamations>
+      <div class="p-5 text-center text-muted bg-white border border-dashed rounded-4">
+        <i class="bi bi-inbox fs-1 d-block mb-3 text-secondary opacity-50"></i>
+        <h5 class="fw-bold text-dark">No complaints registered</h5>
+        <p class="small">Any complaints you submit will appear here.</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- MODAL DÉTAILS / CONTEXTE GESTIONNAIRE -->
+  <div *ngIf="selectedReclamation" class="modal-overlay animate-fade-in" style="z-index: 1050; padding: 2rem;">
+    <div class="container bg-white rounded-4 shadow-lg overflow-hidden position-relative p-0 d-flex flex-column" style="max-width: 1000px; max-height: 90vh;">
+      
+      <!-- Details Header -->
+      <div class="bg-light p-4 border-bottom d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+          <div class="icon-box bg-primary bg-opacity-10 text-primary" style="width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+            <i class="bi fs-4 bi-info-circle-fill"></i>
+          </div>
+          <div>
+            <h4 class="fw-bold mb-0 text-dark">Complaint Details</h4>
+            <span class="text-muted small">Tracking: {{ selectedReclamation.titre }}</span>
+          </div>
+        </div>
+        <button class="btn btn-light rounded-circle border shadow-sm" (click)="selectedReclamation = null"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <!-- Details Body (Scrollable) -->
+      <div class="p-4 p-md-5 overflow-auto flex-grow-1">
+        <div class="row g-5">
+          <!-- Détails Réclamation -->
+          <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                  <div>
+                    <span class="text-muted small fw-bold text-uppercase d-block mb-1">Insured Client</span>
+                    <div class="fw-bold text-dark fs-6">{{ selectedReclamation.userEmail }}</div>
+                  </div>
+                  <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill" *ngIf="selectedReclamation.userCin">
+                    CIN: {{ selectedReclamation.userCin }}
+                  </span>
+                </div>
+
+                <div class="mb-4">
+                  <label class="text-muted small fw-bold text-uppercase d-block mb-2">Nature of Dispute</label>
+                  <div class="p-3 bg-light rounded-4 border-start border-4 border-primary text-dark small fw-medium">
+                    {{ selectedReclamation.description }}
+                  </div>
+                </div>
+
+                <div class="mb-4" *ngIf="selectedReclamation.reponse">
+                  <label class="text-muted small fw-bold text-uppercase d-block mb-2">Official Response</label>
+                  <div class="p-3 bg-success bg-opacity-10 rounded-4 border-start border-4 border-success text-dark italic small fw-medium">
+                    {{ selectedReclamation.reponse }}
+                  </div>
+                </div>
+
+                <!-- Manager Workflow Buttons -->
+                <div *ngIf="isGestionnaire" class="mt-5 border-top pt-4">
+                  <h6 class="fw-bold mb-3 small text-uppercase text-muted">Management Actions</h6>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-warning btn-sm rounded-pill px-3 fw-bold shadow-sm text-dark" (click)="updateStatus('UNDER_REVIEW')">Under Review</button>
+                    <button class="btn btn-info btn-sm text-white rounded-pill px-3 fw-bold shadow-sm" (click)="updateStatus('IN_PROGRESS')">In Progress</button>
+                    <button class="btn btn-success btn-sm rounded-pill px-3 fw-bold shadow-sm" (click)="updateStatus('RESOLVED')">Resolve</button>
+                    <button class="btn btn-danger btn-sm rounded-pill px-3 fw-bold shadow-sm" (click)="updateStatus('REJECTED')">Reject</button>
+                    <button class="btn btn-link text-danger btn-sm ms-auto fw-bold" (click)="deleteRec(selectedReclamation.id!)"><i class="bi bi-trash"></i> Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contexte Sinistre (Traceability) -->
+          <div class="col-lg-5" *ngIf="linkedSinistre">
+            <h6 class="fw-bold text-uppercase text-muted small mb-3 tracking-wider">Related Claim</h6>
+            <div class="card border rounded-4 shadow-sm mb-4 bg-white">
+              <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                  <span class="fw-bold text-primary fs-5">{{ linkedSinistre.numero }}</span>
+                  <span class="badge bg-dark text-white px-3 py-1 rounded-pill">{{ linkedSinistre.statut }}</span>
+                </div>
+                
+                <div class="mb-3">
+                  <label class="text-muted small fw-bold text-uppercase d-block mb-1">Incident Details</label>
+                  <div class="fw-bold text-dark">{{ linkedSinistre.titre }}</div>
+                </div>
+
+                <div class="mb-4">
+                  <label class="text-muted small fw-bold text-uppercase d-block mb-1">Summary</label>
+                  <div class="small text-muted" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{{ linkedSinistre.description }}</div>
+                </div>
+
+                <div class="p-3 bg-light rounded-4 small border-start border-3 border-dark mb-3">
+                  <strong>Management Notes:</strong><br>
+                  <div class="mt-1 text-muted">{{ linkedSinistre.commentaire || 'No specific notes on this claim.' }}</div>
+                </div>
+
+                <a *ngIf="linkedSinistre.document" [href]="'http://localhost:8082/uploads/' + linkedSinistre.document" target="_blank" class="btn btn-outline-dark btn-sm rounded-pill px-4 fw-bold mt-2 w-100">
+                  <i class="bi bi-paperclip me-2"></i>View Documents
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer bg-white p-4 border-top border-light text-end">
+        <button class="btn btn-dark rounded-pill px-5 fw-bold shadow-sm" (click)="selectedReclamation = null">
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

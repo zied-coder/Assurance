@@ -1,0 +1,75 @@
+<div class="container mt-4">
+    <h3>📥 Demandes de Service (En attente)</h3>
+
+    <div *ngIf="demandes.length === 0" class="alert alert-info">
+        Aucune demande en attente.
+    </div>
+
+    <table *ngIf="demandes.length > 0" class="table table-striped shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Client (ID)</th>
+                <th>Contrat (ID)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let d of demandes">
+                <td>
+                    <span class="badge" [ngClass]="{'bg-danger': d.type === 'RESILIATION', 'bg-warning text-dark': d.type === 'MODIFICATION'}">
+                        {{ d.type }}
+                    </span>
+                </td>
+                <td>
+                    <strong>{{ d.description }}</strong>
+                    <div *ngIf="d.type === 'MODIFICATION' && parsePayload(d.updatePayload) as p" class="mt-2 text-muted small">
+                        <div class="p-3 border-0 rounded-3 shadow-sm" style="background: #f8f9fa;">
+                            <div class="row g-2">
+                                <!-- Common Fields -->
+                                <div class="col-12 mb-1">
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
+                                        <i class="fas fa-shield-alt me-1"></i> Formule: {{ p.formule || 'Inchangée' }}
+                                    </span>
+                                </div>
+                                
+                                <!-- Auto Fields -->
+                                <ng-container *ngIf="p.valeurVehicule || p.modele || p.marque">
+                                    <div class="col-6">
+                                        <div class="text-secondary"><i class="fas fa-tag me-1"></i> Valeur: <strong class="text-dark">{{ p.valeurVehicule }} TND</strong></div>
+                                        <div class="text-secondary"><i class="fas fa-bolt me-1"></i> Puissance: <strong class="text-dark">{{ p.puissanceFiscale }} CV</strong></div>
+                                        <div class="text-secondary"><i class="fas fa-history me-1"></i> Âge: <strong class="text-dark">{{ p.ageVehicule }} ans</strong></div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-secondary"><i class="fas fa-car me-1"></i> Véhicule: <strong class="text-dark">{{ p.marque }} {{ p.modele }}</strong></div>
+                                        <div class="text-secondary"><i class="fas fa-id-card me-1"></i> Immat: <strong class="text-dark">{{ p.immatriculation }}</strong></div>
+                                    </div>
+                                </ng-container>
+
+                                <!-- Habitation Fields -->
+                                <ng-container *ngIf="p.valeurBien || p.niveauSecurite">
+                                    <div class="col-6">
+                                        <div class="text-secondary"><i class="fas fa-home me-1"></i> Valeur Bien: <strong class="text-dark">{{ p.valeurBien }} TND</strong></div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-secondary"><i class="fas fa-lock me-1"></i> Sécurité: <strong class="text-dark">{{ p.niveauSecurite }}</strong></div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td>{{ d.userId }}</td>
+                <td>{{ d.contratId }}</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <input [(ngModel)]="feedback" class="form-control form-control-sm me-2" placeholder="Feedback...">
+                        <button class="btn btn-success btn-sm me-2" (click)="process(d.id, 'APPROUVEE')">Approuver</button>
+                        <button class="btn btn-danger btn-sm" (click)="process(d.id, 'REJETEE')">Rejeter</button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

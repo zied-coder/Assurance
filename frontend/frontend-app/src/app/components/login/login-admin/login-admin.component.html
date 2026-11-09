@@ -1,0 +1,51 @@
+<div class="admin-card">
+  <div class="admin-header">
+    <div class="admin-icon">
+      <i class="bi bi-cpu-fill"></i>
+    </div>
+    <h1>{{ 'login.title_admin' | translate }}</h1>
+    <div class="security-badge">
+      <i class="bi bi-shield-lock-fill me-1"></i> Cryptage SSL 256-bit
+    </div>
+  </div>
+
+  <form (ngSubmit)="login()">
+    <div class="form-group-admin">
+      <label>{{ 'login.identifier' | translate }}</label>
+      <input type="text" 
+             class="input-admin" 
+             [(ngModel)]="username" 
+             name="username" 
+             placeholder="ROOT_ID"
+             required>
+    </div>
+
+    <div class="form-group-admin">
+      <label>{{ 'login.password' | translate }}</label>
+      <input type="password" 
+             class="input-admin" 
+             [(ngModel)]="password" 
+             name="password" 
+             placeholder="••••••••"
+             required>
+    </div>
+
+    <button type="submit" class="btn-admin-access">
+      {{ 'login.btn_access' | translate }} <i class="bi bi-terminal ms-2"></i>
+    </button>
+
+    <div *ngIf="errorMessage" class="error-admin">
+      {{ 'common.error' | translate | uppercase }} - {{ errorMessage | uppercase }}
+    </div>
+  </form>
+
+  <div class="admin-footer">
+    PANEL D'ADMINISTRATION ASSURANCES v4.0.2
+  </div>
+  
+  <div class="text-center mt-3">
+    <a routerLink="/" class="text-info small text-decoration-none opacity-50">
+      <i class="bi bi-chevron-left me-1"></i> {{ 'common.back_to_home' | translate }}
+    </a>
+  </div>
+</div>

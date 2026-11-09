@@ -1,0 +1,199 @@
+<!-- HEADER -->
+<header class="header-transparent">
+  <div class="nav-container">
+    <div class="logo-container">
+      <img src="assets/images/bna-logo.png" alt="Assurances" class="logo-img" style="object-fit:contain; background:white; padding:3px;">
+      <span class="logo-text">{{ 'common.bna_assurances' | translate }}</span>
+    </div>
+    <div class="nav-actions d-flex align-items-center gap-3">
+      <!-- Language Selector Dropdown -->
+      <div class="position-relative">
+        <button class="lang-dropdown-btn" (click)="toggleLangDropdown()">
+          <i class="bi bi-globe"></i>
+          <span>{{ getLanguageLabel(translationService.currentLang()) }}</span>
+          <i class="bi bi-chevron-down" style="font-size:0.75rem;"></i>
+        </button>
+        
+        <div class="dropdown-menu lang-dropdown-menu show" *ngIf="isLangDropdownOpen" 
+             [style.position]="'absolute'" 
+             [style.right]="translationService.currentLang() === 'ar' ? 'auto' : '0'" 
+             [style.left]="translationService.currentLang() === 'ar' ? '0' : 'auto'">
+          <div class="lang-dropdown-item" [class.active]="translationService.currentLang() === 'fr'" (click)="selectLanguage('fr')">
+            <span>🇫🇷</span> Français
+          </div>
+          <div class="lang-dropdown-item" [class.active]="translationService.currentLang() === 'en'" (click)="selectLanguage('en')">
+            <span>🇬🇧</span> English
+          </div>
+          <div class="lang-dropdown-item" [class.active]="translationService.currentLang() === 'ar'" (click)="selectLanguage('ar')">
+            <span>🇹🇳</span> العربية
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-login-modern" routerLink="/login/user">
+        <i class="bi bi-person-circle me-2"></i>{{ 'navbar.mon_espace' | translate }}
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- HERO SECTION -->
+  <section class="hero-wrapper">
+    <div class="container-hero-advanced">
+      <div class="hero-text-content animate-slide-up">
+        <span class="hero-tag">{{ 'common.innov_trust' | translate }}</span>
+        <h1 class="hero-title-main">
+          {{ 'home.title_main' | translate }} <br>
+          <span class="text-premium-gradient">{{ 'home.title_gradient' | translate }}</span>
+        </h1>
+        <p class="hero-desc-large">
+          {{ 'home.desc_large' | translate }}
+        </p>
+        <div class="hero-btn-group">
+          <button class="btn-cta-primary" (click)="openSimulation()">
+            {{ 'home.cta_simulation' | translate }} <i class="bi bi-arrow-right-short ms-2"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-visual-content d-none d-lg-block animate-slide-up" style="animation-delay: 0.2s;">
+        <div class="glass-panel p-5 text-center">
+          <div class="icon-wrapper-large bg-primary mx-auto mb-4" style="width: 100px; height: 100px;">
+            <i class="bi bi-shield-lock-fill text-white"></i>
+          </div>
+          <h2 class="fw-bold mb-3">{{ 'home.protection_360' | translate }}</h2>
+          <p class="text-white-50">{{ 'home.protection_desc' | translate }}</p>
+          <div class="d-flex justify-content-center gap-3 mt-4">
+            <span class="badge bg-success rounded-pill px-3 py-2">{{ 'home.certified_bna' | translate }}</span>
+            <span class="badge bg-info rounded-pill px-3 py-2">{{ 'home.available_247' | translate }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <section class="services-section pt-0">
+    <div class="glass-panel glass-stats-bar animate-slide-up" style="animation-delay: 0.4s;">
+      <div class="stat-box">
+        <h2>+1.2M</h2>
+        <p>{{ 'home.active_clients' | translate }}</p>
+      </div>
+      <div class="stat-box">
+        <h2>98%</h2>
+        <p>{{ 'home.satisfaction_rate' | translate }}</p>
+      </div>
+      <div class="stat-box">
+        <h2>15min</h2>
+        <p>{{ 'home.avg_response_time' | translate }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES GRID -->
+  <section class="services-section">
+    <div class="text-center mb-5 animate-slide-up">
+      <span class="hero-tag">{{ 'home.tag_expertise' | translate }}</span>
+      <h2 class="display-4 fw-bold">{{ 'home.title_expertise' | translate }}</h2>
+    </div>
+
+    <div class="grid-cards animate-slide-up" style="animation-delay: 0.6s;">
+      <!-- AUTO -->
+      <div class="glass-panel advanced-card" (click)="showInfo('auto')">
+        <div class="icon-wrapper-large text-primary">🚗</div>
+        <h3>{{ 'home.card_auto_title' | translate }}</h3>
+        <p>{{ 'home.card_auto_desc' | translate }}</p>
+        <a class="learn-more-link" href="javascript:void(0)">{{ 'home.learn_more' | translate }} <i class="bi bi-chevron-right"></i></a>
+      </div>
+
+      <!-- HABITATION -->
+      <div class="glass-panel advanced-card" (click)="showInfo('habitation')">
+        <div class="icon-wrapper-large text-warning">🏠</div>
+        <h3>{{ 'home.card_habitation_title' | translate }}</h3>
+        <p>{{ 'home.card_habitation_desc' | translate }}</p>
+        <a class="learn-more-link" href="javascript:void(0)" style="color: #f59e0b;">{{ 'home.learn_more' | translate }} <i class="bi bi-chevron-right"></i></a>
+      </div>
+
+      <!-- SANTE -->
+      <div class="glass-panel advanced-card" (click)="showInfo('sante')">
+        <div class="icon-wrapper-large text-danger">❤️</div>
+        <h3>{{ 'home.card_sante_title' | translate }}</h3>
+        <p>{{ 'home.card_sante_desc' | translate }}</p>
+        <a class="learn-more-link" href="javascript:void(0)" style="color: #ef4444;">{{ 'home.learn_more' | translate }} <i class="bi bi-chevron-right"></i></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer-dark">
+  <div class="footer-content">
+    <div class="brand-info">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <img src="assets/images/bna-logo.png" height="50" style="width:50px; object-fit:contain; border-radius:8px; background:white; padding:3px;">
+        <span class="fs-4 fw-bold">{{ 'common.bna_assurances' | translate }}</span>
+      </div>
+      <p class="text-white-50">{{ 'home.footer_desc' | translate }}</p>
+    </div>
+    
+    <div class="footer-col">
+      <h5 class="fw-bold mb-4">{{ 'home.footer_products' | translate }}</h5>
+      <ul class="list-unstyled text-white-50">
+        <li class="mb-2"><a href="#" class="text-reset text-decoration-none">{{ 'home.card_auto_title' | translate }}</a></li>
+        <li class="mb-2"><a href="#" class="text-reset text-decoration-none">{{ 'home.card_habitation_title' | translate }}</a></li>
+        <li class="mb-2"><a href="#" class="text-reset text-decoration-none">{{ 'home.card_sante_title' | translate }}</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h5 class="fw-bold mb-4">{{ 'home.footer_assistance' | translate }}</h5>
+      <ul class="list-unstyled text-white-50">
+        <li class="mb-2"><a href="#" class="text-reset text-decoration-none">{{ 'claims.btn_declare' | translate }}</a></li>
+        <li class="mb-2"><a href="#" class="text-reset text-decoration-none">{{ 'common.urgency' | translate }}</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h5 class="fw-bold mb-4">{{ 'home.footer_follow_us' | translate }}</h5>
+      <div class="d-flex gap-3 fs-4">
+        <i class="bi bi-facebook"></i>
+        <i class="bi bi-linkedin"></i>
+        <i class="bi bi-twitter-x"></i>
+      </div>
+    </div>
+  </div>
+  <div class="text-center mt-5 pt-5 text-white-50 small border-top border-secondary">
+    &copy; 2026 {{ 'common.bna_assurances' | translate }}. {{ 'home.footer_rights' | translate }}
+  </div>
+</footer>
+
+<!-- MODALS (ADAPTED TO DARK THEME) -->
+<div *ngIf="selectedInfo" class="overlay">
+  <div class="modal-premium modal-dark animate-slide-up">
+    <div class="icon-wrapper-large mx-auto mb-4">{{ selectedInfo.icon || '🛡️' }}</div>
+    <h2 class="text-center">{{ selectedInfo.title }}</h2>
+    <p class="text-center text-white-50">{{ selectedInfo.text }}</p>
+    <div class="text-center">
+      <button class="btn btn-outline-light rounded-pill px-5" (click)="closePopup()">{{ 'common.close' | translate }}</button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showSimulation" class="overlay">
+  <div class="modal-premium modal-dark animate-slide-up" style="max-width: 900px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0">💰 {{ 'simulation.title' | translate }}</h2>
+      <button class="btn-close btn-close-white" (click)="closeSimulation()"></button>
+    </div>
+    <div class="p-3 bg-dark rounded-4 mb-4">
+       <app-simulation></app-simulation>
+    </div>
+    <div class="text-center">
+      <button class="btn btn-primary rounded-pill px-5 py-2" (click)="closeSimulation()">{{ 'common.close' | translate }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHATBOT -->
+<app-chatbot></app-chatbot>

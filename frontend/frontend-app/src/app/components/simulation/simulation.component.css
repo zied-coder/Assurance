@@ -1,0 +1,37 @@
+.sim-box {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  width: 350px;
+  margin: auto;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.sim-box input,
+.sim-box select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.sim-box button {
+  margin-top: 15px;
+  width: 100%;
+  padding: 10px;
+  background: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sim-box button:hover {
+  background: #084298;
+}
+
+.result-box {
+  margin-top: 15px;
+  color: green;
+}

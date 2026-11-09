@@ -1,0 +1,168 @@
+/* Admin Login – BNA Brand (dark premium style matching brand) */
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #111a5c 0%, #1a2472 50%, #2B3990 100%);
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+:host::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/assets/images/bna-logo.png') center/contain no-repeat;
+  opacity: 0.05;
+}
+
+/* Animated blobs */
+:host::after {
+  content: '';
+  position: absolute;
+  bottom: -100px; right: -100px;
+  width: 400px; height: 400px;
+  background: rgba(0,132,61,0.12);
+  border-radius: 50%;
+  filter: blur(60px);
+}
+
+.admin-card {
+  position: relative;
+  z-index: 1;
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 3.5rem;
+  border-radius: 28px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 32px 64px rgba(0,0,0,0.4);
+  animation: cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: scale(0.95) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Top accent */
+.admin-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #2B3990, #1e40af, #FFD100);
+  border-radius: 28px 28px 0 0;
+}
+
+.admin-header { text-align: center; margin-bottom: 2.5rem; }
+
+.admin-icon {
+  width: 80px; height: 80px;
+  background: rgba(255,255,255,0.1);
+  border: 1.5px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.25rem; color: #FFD100;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.admin-header h1 {
+  color: white;
+  font-weight: 900;
+  font-size: 1.75rem;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.75rem;
+}
+
+.security-badge {
+  display: inline-block;
+  padding: 0.35rem 1rem;
+  background: rgba(0,132,61,0.2);
+  color: #4ade80;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border: 1px solid rgba(0,132,61,0.3);
+}
+
+.form-group-admin { margin-bottom: 1.5rem; }
+
+.form-group-admin label {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 0.65rem;
+}
+
+.input-admin {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  border: 1.5px solid rgba(255,255,255,0.12);
+  color: white;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.25s ease;
+}
+
+.input-admin::placeholder { color: rgba(255,255,255,0.3); }
+
+.input-admin:focus {
+  border-color: #FFD100;
+  background: rgba(255,255,255,0.1);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,209,0,0.15);
+}
+
+.btn-admin-access {
+  width: 100%;
+  background: linear-gradient(135deg, #2B3990 0%, #1a2472 100%);
+  color: white;
+  border: none;
+  padding: 1.1rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(43,57,144,0.4);
+  cursor: pointer;
+}
+
+.btn-admin-access:hover {
+  background: linear-gradient(135deg, #1a2472 0%, #111a5c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(43,57,144,0.5);
+}
+
+.error-admin {
+  background: rgba(239,68,68,0.12);
+  color: #f87171;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  border: 1px solid rgba(239,68,68,0.25);
+  text-align: center;
+}
+
+.admin-footer {
+  text-align: center;
+  margin-top: 2.5rem;
+  color: rgba(255,255,255,0.25);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}

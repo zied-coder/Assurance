@@ -1,0 +1,649 @@
+<!-- HEADER SECTION -->
+<div class="bg-white border-bottom mb-4">
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h2 class="fw-bold mb-1 text-dark"><i class="bi bi-shield-fill-check text-primary me-2"></i>Claims Management</h2>
+        <p class="text-muted mb-0">Professional management of your insurance claims and compensations</p>
+      </div>
+      <div *ngIf="isUser">
+        <button class="btn btn-primary btn-lg rounded-pill px-4 fw-bold shadow-sm animate-fade-in" (click)="ouvrirFormulaireAjouter()">
+          <i class="bi bi-plus-lg me-2"></i>Declare a Claim
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container pb-5">
+  <!-- KPI STATS -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-3">
+      <div class="card card-stat border-0 shadow-sm p-4">
+        <div class="icon-box bg-soft-primary"><i class="bi bi-folder2"></i></div>
+        <h6 class="text-muted small fw-bold text-uppercase mb-1">Total Dossiers</h6>
+        <h3 class="fw-bold mb-0">{{ sinistres.length }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card card-stat border-0 shadow-sm p-4">
+        <div class="icon-box bg-soft-warning"><i class="bi bi-clock-history"></i></div>
+        <h6 class="text-muted small fw-bold text-uppercase mb-1">En cours</h6>
+        <h3 class="fw-bold mb-0">{{ sinistresParStatut(['SUBMITTED', 'UNDER_REVIEW', 'EXPERT_ASSIGNED', 'UNDER_EXPERT_REVIEW']).length }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card card-stat border-0 shadow-sm p-4">
+        <div class="icon-box bg-soft-success"><i class="bi bi-check-all"></i></div>
+        <h6 class="text-muted small fw-bold text-uppercase mb-1">Indemnisés</h6>
+        <h3 class="fw-bold mb-0">{{ sinistresParStatut(['SETTLED']).length }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card card-stat border-0 shadow-sm p-4">
+        <div class="icon-box bg-soft-danger"><i class="bi bi-exclamation-triangle"></i></div>
+        <h6 class="text-muted small fw-bold text-uppercase mb-1">Alertes Client</h6>
+        <h3 class="fw-bold mb-0">{{ sinistresParStatut(['ADDITIONAL_INFORMATION_REQUIRED']).length }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SEARCH (MANAGER ONLY) ================= -->
+  <div *ngIf="isGestionnaire" class="mb-5 d-flex justify-content-end animate-fade-in">
+    <div class="position-relative shadow-sm transition-all" style="width: 100%; max-width: 380px; border-radius: 50px; background-color: #fff; border: 1px solid #e2e8f0;">
+      <i class="bi bi-search position-absolute text-primary opacity-75" style="left: 18px; top: 50%; transform: translateY(-50%); font-size: 1rem;"></i>
+      <input type="text" class="form-control border-0 bg-transparent shadow-none" 
+             style="padding: 12px 45px 12px 48px; border-radius: 50px; font-size: 0.95rem; font-weight: 500; color: #334155;" 
+             placeholder="Search by Claim Reference..." 
+             [(ngModel)]="searchNumero">
+      <button *ngIf="searchNumero" class="btn border-0 position-absolute text-muted hover-primary p-1" 
+              style="right: 12px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center;" 
+              (click)="clearSearch()">
+        <i class="bi bi-x-circle-fill" style="font-size: 1.1rem;"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= FORM SECTION ================= -->
+  <div *ngIf="showForm && sinistreEnEdition" class="card border-0 shadow-sm mb-5 rounded-4 overflow-hidden animate-fade-in bg-white" style="border: 1px solid #e2e8f0 !important;">
+    <div class="bg-light p-4 border-bottom d-flex align-items-center gap-3">
+      <div class="icon-box bg-primary bg-opacity-10 text-primary" style="width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+        <i class="bi fs-4" [ngClass]="actionMode === 'CREATE' ? 'bi-file-earmark-plus-fill' : 'bi-pencil-square'"></i>
+      </div>
+      <div>
+        <h4 class="fw-bold mb-0 text-dark">
+          {{ actionMode === 'CREATE' ? 'Submit a New Claim' : actionMode === 'EDIT' ? 'Edit Claim Request' : 'Provide Additional Information' }}
+        </h4>
+        <span class="text-muted small">Please fill out the incident details accurately</span>
+      </div>
+    </div>
+    <div class="card-body p-4 p-md-5">
+      <div *ngIf="isUser" class="row g-4">
+        <div class="col-md-6" [ngClass]="{'col-md-8': actionMode === 'COMPLETE'}">
+          <label class="form-label fw-bold small text-uppercase text-muted">Incident Title</label>
+          <input class="form-control form-control-lg bg-light border-0 rounded-3" [(ngModel)]="sinistreEnEdition.titre" placeholder="e.g., Water damage, Car accident...">
+        </div>
+        <div class="col-md-6" *ngIf="actionMode === 'CREATE'">
+          <label class="form-label fw-bold small text-uppercase text-muted">Linked Contract</label>
+          <select class="form-select form-select-lg bg-light border-0 rounded-3" [(ngModel)]="sinistreEnEdition.contratId">
+            <option value="">-- Select an active policy --</option>
+            <option *ngFor="let c of userContrats" [value]="c.numero">{{ c.numero }} ({{ c.type }})</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-bold small text-uppercase text-muted">Date of Incident</label>
+          <input type="date" class="form-control form-control-lg bg-light border-0 rounded-3" [(ngModel)]="sinistreEnEdition.incidentDate" [max]="todayString">
+        </div>
+        <div class="col-md-8">
+          <label class="form-label fw-bold small text-uppercase text-muted">Incident Location</label>
+          <div class="input-group input-group-lg shadow-sm rounded-3 overflow-hidden">
+            <span class="input-group-text bg-white border-0"><i class="bi bi-geo-alt text-primary"></i></span>
+            <input type="text" class="form-control bg-white border-0" placeholder="Exact address" [(ngModel)]="sinistreEnEdition.adresse">
+            <button class="btn btn-primary fw-bold px-4 border-0" type="button" (click)="detectLocation()" [disabled]="isGeocoding">
+              <span *ngIf="isGeocoding" class="spinner-border spinner-border-sm me-2"></span>
+              Detect
+            </button>
+          </div>
+        </div>
+        <div class="col-12" *ngIf="sinistreEnEdition.incidentDate && getDelayDays(sinistreEnEdition.incidentDate, todayString) !== null">
+          <div class="alert alert-info border-0 rounded-4 py-3 px-4 mb-0 d-flex align-items-center gap-3">
+            <i class="bi bi-info-circle-fill fs-4 text-info"></i>
+            <div>
+              <span class="d-block fw-bold text-dark">Estimated declaration delay: <span class="text-primary">{{ getDelayDays(sinistreEnEdition.incidentDate, todayString) }} day(s)</span></span>
+              <span class="small text-muted">{{ getDelayDays(sinistreEnEdition.incidentDate, todayString) === 0 ? "Immediate declaration" : "Delayed declaration" }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-bold small text-uppercase text-muted">Detailed Description</label>
+          <textarea class="form-control bg-light border-0 rounded-3 p-3" rows="5" [(ngModel)]="sinistreEnEdition.description" placeholder="Describe exactly what happened, the circumstances, and apparent damages..."></textarea>
+        </div>
+        <div class="col-md-12">
+          <label class="form-label fw-bold small text-uppercase text-muted">Attachments (Photos/Reports)</label>
+          <div class="border border-2 border-dashed rounded-4 p-4 text-center bg-light" style="border-color: #cbd5e1 !important;">
+             <i class="bi bi-cloud-arrow-up text-primary fs-1 mb-2 d-block"></i>
+             <span class="fw-bold d-block text-dark mb-1">Upload files</span>
+             <span class="small text-muted d-block mb-3">PNG, JPG, PDF up to 10MB</span>
+             <input type="file" class="form-control bg-white border-0 rounded-3 shadow-sm mx-auto" style="max-width: 400px;" (change)="onFileSelected($event)">
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="isGestionnaire || isAdmin" class="row g-4 border-top pt-4 mt-4">
+        <h6 class="fw-bold text-uppercase text-primary small mb-0"><i class="bi bi-shield-lock me-2"></i>Administration Area</h6>
+        <div class="col-md-6">
+          <label class="form-label fw-bold small text-uppercase text-muted">Update Status</label>
+          <select class="form-select form-select-lg bg-light border-0 rounded-3" [(ngModel)]="sinistreEnEdition.statut">
+            <option value="SUBMITTED">NEW (SUBMITTED)</option>
+            <option value="UNDER_REVIEW">UNDER REVIEW</option>
+            <option value="ADDITIONAL_INFORMATION_REQUIRED">MISSING INFO</option>
+            <option value="EXPERT_ASSIGNED">EXPERT ASSIGNED</option>
+            <option value="UNDER_EXPERT_REVIEW">UNDER EXPERTISE</option>
+            <option value="APPROVED">APPROVED</option>
+            <option value="REJECTED">REJECTED</option>
+            <option value="SETTLED">SETTLED / PAID</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-bold small text-uppercase text-muted">Internal Note / Customer Comment</label>
+          <textarea class="form-control bg-light border-0 rounded-3" rows="3" [(ngModel)]="sinistreEnEdition.commentaire" placeholder="Add a comment..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer bg-white p-4 d-flex justify-content-end gap-3 border-top">
+      <button class="btn btn-light rounded-pill px-5 fw-bold text-dark border shadow-sm" (click)="annulerForm()">Cancel</button>
+      <button class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm" *ngIf="actionMode === 'CREATE'" (click)="addSinistre()">Submit Claim</button>
+      <button class="btn btn-dark rounded-pill px-5 fw-bold shadow-sm" *ngIf="actionMode === 'EDIT'" (click)="validerModification()">Save Changes</button>
+      <button class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm" *ngIf="actionMode === 'COMPLETE'" (click)="validerCompletionUser()">Send Information</button>
+    </div>
+  </div>
+
+  <!-- ================= LIST SECTIONS ================= -->
+  
+  <!-- 1. ACTIVE WORKFLOW (New & Review) -->
+  <div class="mb-5 animate-fade-in">
+    <div class="d-flex align-items-center gap-2 mb-4">
+      <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary"><i class="bi bi-collection-play-fill fs-5"></i></div>
+      <h4 class="fw-bold mb-0 text-dark">Active Claims</h4>
+    </div>
+
+    <!-- CLIENT VIEW (CARDS) -->
+    <div *ngIf="isUser">
+      <div class="row g-4" *ngIf="sinistresParStatut(['SUBMITTED', 'UNDER_REVIEW']).length > 0; else emptyActiveClient">
+        <div class="col-lg-6 col-xl-4" *ngFor="let s of sinistresParStatut(['SUBMITTED', 'UNDER_REVIEW'])">
+          <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden bg-white hover-lift" style="transition: transform 0.2s, box-shadow 0.2s;">
+            <div class="card-body p-4 position-relative">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-1 small fw-bold mb-2">
+                    <i class="bi me-1" [ngClass]="s.statut === 'SUBMITTED' ? 'bi-stars' : 'bi-search'"></i>
+                    {{ s.statut === 'SUBMITTED' ? 'NEW' : 'UNDER REVIEW' }}
+                  </span>
+                  <h5 class="fw-bold text-dark mb-1 text-truncate" style="max-width: 250px;">{{ s.titre }}</h5>
+                  <span class="text-muted small">Ref: {{ s.numero }}</span>
+                </div>
+                <div class="icon-box bg-light text-secondary rounded-circle p-2 d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                   <i class="bi bi-folder2-open fs-5"></i>
+                </div>
+              </div>
+              
+              <p class="text-muted small mb-3" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 40px;">{{ s.description }}</p>
+              
+              <div class="d-flex align-items-center gap-2 small text-muted mb-2">
+                <i class="bi bi-geo-alt-fill text-danger opacity-75"></i>
+                <span class="text-truncate">{{ s.adresse || 'Location not specified' }}</span>
+              </div>
+              <div class="d-flex align-items-center gap-2 small text-muted">
+                 <i class="bi bi-calendar-event text-primary opacity-75"></i>
+                 <span>{{ s.incidentDate | date:'mediumDate' }}</span>
+              </div>
+            </div>
+            <div class="card-footer bg-light p-3 border-top d-flex gap-2 justify-content-between align-items-center">
+               <button class="btn btn-sm btn-white fw-bold border shadow-sm rounded-pill px-3 text-dark bg-white w-100" (click)="viewSinistre(s)">View Details</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-template #emptyActiveClient>
+        <div class="p-5 text-center text-muted bg-white border border-dashed rounded-4">
+          <i class="bi bi-inbox fs-1 d-block mb-3 text-secondary opacity-50"></i>
+          <h5 class="fw-bold text-dark">No active claims</h5>
+          <p class="small">All claims have been processed or none have been submitted yet.</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- MANAGER VIEW (MODERN TABLE) -->
+    <div *ngIf="isGestionnaire || isAdmin">
+      <div class="table-container border-0 shadow-sm bg-white rounded-4 overflow-hidden" *ngIf="sinistresParStatut(['SUBMITTED', 'UNDER_REVIEW']).length > 0; else emptyActiveManager">
+        <table class="table mb-0 table-hover align-middle">
+          <thead class="bg-light">
+            <tr>
+              <th class="ps-4 border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Ref & Status</th>
+              <th class="border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Incident Overview</th>
+              <th class="border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Client & Location</th>
+              <th class="text-end pe-4 border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of sinistresParStatut(['SUBMITTED', 'UNDER_REVIEW'])">
+              <td class="ps-4 py-3 border-bottom">
+                <span class="fw-bold text-dark fs-6 d-block mb-1">{{ s.numero }}</span>
+                <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1" style="font-size: 0.7rem;">
+                  {{ s.statut === 'SUBMITTED' ? 'NEW' : 'UNDER REVIEW' }}
+                </span>
+              </td>
+              <td class="py-3 border-bottom">
+                <div class="fw-bold text-dark mb-1">{{ s.titre }}</div>
+                <div class="small text-muted text-truncate" style="max-width: 280px;">{{ s.description }}</div>
+              </td>
+              <td class="py-3 border-bottom">
+                <div class="small fw-semibold text-dark mb-1"><i class="bi bi-person-fill me-1 text-primary"></i>{{ s.userEmail }}</div>
+                <div class="small text-muted text-truncate" style="max-width: 200px;"><i class="bi bi-geo-alt-fill me-1 text-muted"></i>{{ s.adresse || 'N/A' }}</div>
+              </td>
+              <td class="text-end pe-4 py-3 border-bottom" style="white-space: nowrap;">
+                <button class="btn btn-sm btn-light fw-bold shadow-sm rounded-pill px-3 me-2 text-dark" (click)="viewSinistre(s)" title="View Details"><i class="bi bi-eye"></i></button>
+                <button class="btn btn-sm btn-outline-warning rounded-circle me-1" *ngIf="s.statut === 'SUBMITTED'" (click)="examiner(s.id)" title="Review"><i class="bi bi-search"></i></button>
+                <button class="btn btn-sm btn-outline-info rounded-circle me-1" (click)="demanderPlusInfo(s.id)" title="Request Info"><i class="bi bi-info-circle"></i></button>
+                <button class="btn btn-sm btn-outline-primary rounded-circle me-1" (click)="assignerExpert(s.id)" title="Assign Expert"><i class="bi bi-person-badge"></i></button>
+                <button class="btn btn-sm btn-outline-danger rounded-circle" (click)="rendreDecision(s.id, 'REJECTED')" title="Reject"><i class="bi bi-x-lg"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #emptyActiveManager>
+        <div class="p-5 text-center text-muted bg-white border border-dashed rounded-4">
+          <i class="bi bi-inbox fs-1 d-block mb-3 text-secondary opacity-50"></i>
+          <h5 class="fw-bold text-dark">No claims to review</h5>
+          <p class="small">The queue is currently empty.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- 2. EXPERTISE -->
+  <div class="mb-5 animate-fade-in" *ngIf="sinistresParStatut(['EXPERT_ASSIGNED', 'UNDER_EXPERT_REVIEW']).length > 0">
+    <div class="d-flex align-items-center gap-2 mb-4">
+      <div class="bg-info bg-opacity-10 p-2 rounded-3 text-info"><i class="bi bi-tools fs-5"></i></div>
+      <h4 class="fw-bold mb-0 text-dark">Technical Expertise</h4>
+    </div>
+
+    <!-- CLIENT VIEW -->
+    <div *ngIf="isUser" class="row g-4">
+      <div class="col-lg-6 col-xl-4" *ngFor="let s of sinistresParStatut(['EXPERT_ASSIGNED', 'UNDER_EXPERT_REVIEW'])">
+        <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden bg-white">
+          <div class="card-body p-4 position-relative">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <span class="badge rounded-pill bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-3 py-1 small fw-bold mb-2">
+                  <i class="bi me-1" [ngClass]="s.statut === 'EXPERT_ASSIGNED' ? 'bi-person-badge' : 'bi-file-earmark-text'"></i>
+                  {{ s.statut === 'EXPERT_ASSIGNED' ? 'EXPERT ASSIGNED' : 'UNDER EXPERTISE' }}
+                </span>
+                <h5 class="fw-bold text-dark mb-1 text-truncate" style="max-width: 250px;">{{ s.titre }}</h5>
+                <span class="text-muted small">Ref: {{ s.numero }}</span>
+              </div>
+              <div class="icon-box bg-light text-info rounded-circle p-2 d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                 <i class="bi bi-clipboard-data fs-5"></i>
+              </div>
+            </div>
+            
+            <div class="bg-light p-3 rounded-3 mt-3 border border-info border-opacity-25">
+              <span class="text-muted small d-block mb-1 text-uppercase fw-bold">Assigned Expert</span>
+              <div class="fw-bold text-dark">{{ s.expertNom }}</div>
+              <div class="small text-muted"><i class="bi bi-telephone-fill me-1"></i>{{ s.expertTelephone }}</div>
+            </div>
+          </div>
+          <div class="card-footer bg-white p-3 border-top text-end">
+             <button class="btn btn-sm btn-light fw-bold border shadow-sm rounded-pill px-4 text-dark w-100" (click)="viewSinistre(s)">View Details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MANAGER VIEW -->
+    <div *ngIf="isGestionnaire || isAdmin" class="table-container border-0 shadow-sm bg-white rounded-4 overflow-hidden">
+      <table class="table mb-0 table-hover align-middle">
+        <thead class="bg-light">
+          <tr>
+            <th class="ps-4 border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Ref & Status</th>
+            <th class="border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Claim Title</th>
+            <th class="border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Field Expert</th>
+            <th class="text-end pe-4 border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of sinistresParStatut(['EXPERT_ASSIGNED', 'UNDER_EXPERT_REVIEW'])">
+            <td class="ps-4 py-3 border-bottom">
+              <span class="fw-bold text-dark fs-6 d-block mb-1">{{ s.numero }}</span>
+              <span class="badge rounded-pill bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-2 py-1" style="font-size: 0.7rem;">
+                {{ s.statut === 'EXPERT_ASSIGNED' ? 'EXPERT ASSIGNED' : 'UNDER EXPERTISE' }}
+              </span>
+            </td>
+            <td class="py-3 border-bottom fw-bold text-dark">{{ s.titre }}</td>
+            <td class="py-3 border-bottom">
+              <div class="fw-bold text-dark mb-1">{{ s.expertNom }}</div>
+              <div class="small text-muted"><i class="bi bi-telephone-fill me-1 text-muted"></i>{{ s.expertTelephone }}</div>
+            </td>
+            <td class="text-end pe-4 py-3 border-bottom">
+              <button class="btn btn-sm btn-light fw-bold shadow-sm rounded-pill px-3 me-2 text-dark" (click)="viewSinistre(s)" title="View Details"><i class="bi bi-eye"></i></button>
+              <button class="btn btn-sm btn-outline-success rounded-circle me-1" *ngIf="s.statut === 'EXPERT_ASSIGNED'" (click)="soumettreRapport(s.id)" title="Submit Report"><i class="bi bi-clipboard-check-fill"></i></button>
+              <button class="btn btn-sm btn-outline-primary rounded-circle" *ngIf="s.statut === 'UNDER_EXPERT_REVIEW'" (click)="rendreDecision(s.id, 'APPROVED')" title="Approve"><i class="bi bi-check-circle-fill"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3. ACTION REQUIRED -->
+  <div class="mb-5 animate-fade-in" *ngIf="sinistresParStatut(['ADDITIONAL_INFORMATION_REQUIRED']).length > 0">
+    <div class="d-flex align-items-center gap-2 mb-4">
+      <div class="bg-warning bg-opacity-10 p-2 rounded-3 text-warning"><i class="bi bi-exclamation-triangle-fill fs-5"></i></div>
+      <h4 class="fw-bold mb-0 text-dark">Action Required</h4>
+    </div>
+
+    <!-- CLIENT VIEW -->
+    <div *ngIf="isUser" class="row g-4">
+      <div class="col-lg-6 col-xl-4" *ngFor="let s of sinistresParStatut(['ADDITIONAL_INFORMATION_REQUIRED'])">
+        <div class="card shadow-sm h-100 rounded-4 overflow-hidden bg-white" style="border: 2px solid #fbbf24 !important;">
+          <div class="card-body p-4 position-relative bg-warning bg-opacity-10">
+            <span class="badge rounded-pill bg-warning text-dark border border-warning px-3 py-1 small fw-bold mb-3 shadow-sm">
+              <i class="bi bi-exclamation-circle me-1"></i> MISSING INFO
+            </span>
+            <h5 class="fw-bold text-dark mb-1">{{ s.titre }}</h5>
+            <span class="text-muted small d-block mb-3">Ref: {{ s.numero }}</span>
+            
+            <div class="bg-white p-3 rounded-3 shadow-sm">
+              <span class="text-danger small fw-bold text-uppercase d-block mb-1">Message from Manager</span>
+              <p class="small text-dark mb-0 fw-semibold">{{ s.commentaire }}</p>
+            </div>
+          </div>
+          <div class="card-footer bg-white p-3 d-flex gap-2 justify-content-between align-items-center border-0">
+             <button class="btn btn-sm btn-light fw-bold border shadow-sm rounded-pill px-3 text-dark" (click)="viewSinistre(s)">View Details</button>
+             <button class="btn btn-sm btn-warning fw-bold shadow-sm rounded-pill px-3 text-dark" (click)="completeSinistre(s)">
+               <i class="bi bi-upload me-1"></i> Update
+             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MANAGER VIEW -->
+    <div *ngIf="isGestionnaire || isAdmin" class="table-container border-0 shadow-sm bg-white rounded-4 overflow-hidden">
+      <table class="table mb-0 table-hover align-middle">
+        <thead class="bg-light">
+          <tr>
+            <th class="ps-4 border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Ref</th>
+            <th class="border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Claim Title</th>
+            <th class="border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Manager Message</th>
+            <th class="text-end pe-4 border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of sinistresParStatut(['ADDITIONAL_INFORMATION_REQUIRED'])" class="bg-warning bg-opacity-10">
+            <td class="ps-4 py-3 border-bottom"><span class="fw-bold text-dark fs-6 d-block">{{ s.numero }}</span></td>
+            <td class="py-3 border-bottom fw-bold text-dark">{{ s.titre }}</td>
+            <td class="py-3 border-bottom">
+              <div class="small fw-semibold text-danger"><i class="bi bi-chat-dots-fill me-1"></i>{{ s.commentaire }}</div>
+            </td>
+            <td class="text-end pe-4 py-3 border-bottom">
+              <button class="btn btn-sm btn-light fw-bold shadow-sm rounded-pill px-3 text-dark" (click)="viewSinistre(s)" title="View Details"><i class="bi bi-eye"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4. FINALIZED -->
+  <div class="mb-5 animate-fade-in">
+    <div class="d-flex align-items-center gap-2 mb-4">
+      <div class="bg-success bg-opacity-10 p-2 rounded-3 text-success"><i class="bi bi-archive-fill fs-5"></i></div>
+      <h4 class="fw-bold mb-0 text-dark">Completed Claims</h4>
+    </div>
+
+    <!-- CLIENT VIEW -->
+    <div *ngIf="isUser">
+      <div class="row g-4" *ngIf="sinistresParStatut(['APPROVED', 'REJECTED', 'SETTLED']).length > 0; else emptyHistoryClient">
+        <div class="col-lg-6 col-xl-4" *ngFor="let s of sinistresParStatut(['APPROVED', 'REJECTED', 'SETTLED'])">
+          <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden bg-white" [ngClass]="{'opacity-75': s.statut === 'SETTLED' || s.statut === 'REJECTED'}">
+            <div class="card-body p-4 position-relative">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <span class="badge rounded-pill px-3 py-1 small fw-bold mb-2" [ngClass]="{
+                    'bg-success text-white': s.statut === 'APPROVED' || s.statut === 'SETTLED',
+                    'bg-danger text-white': s.statut === 'REJECTED'
+                  }">
+                    <i class="bi me-1" [ngClass]="s.statut === 'APPROVED' ? 'bi-check-circle-fill' : s.statut === 'REJECTED' ? 'bi-x-circle-fill' : 'bi-cash-coin'"></i>
+                    {{ s.statut }}
+                  </span>
+                  <h5 class="fw-bold text-dark mb-1 text-truncate" style="max-width: 250px;">{{ s.titre }}</h5>
+                  <span class="text-muted small">Ref: {{ s.numero }}</span>
+                </div>
+              </div>
+              
+              <p class="text-muted small mb-0 claim-desc-truncate" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ s.description }}</p>
+            </div>
+            <div class="card-footer bg-light p-3 border-top text-end">
+               <button class="btn btn-sm btn-white fw-bold border shadow-sm rounded-pill px-4 text-dark bg-white w-100" (click)="viewSinistre(s)">View Report</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-template #emptyHistoryClient>
+        <div class="p-5 text-center text-muted bg-white border border-dashed rounded-4">
+          <i class="bi bi-clock-history fs-1 d-block mb-3 text-secondary opacity-50"></i>
+          <h5 class="fw-bold text-dark">No history available</h5>
+          <p class="small">Completed and rejected claims will appear here.</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- MANAGER VIEW -->
+    <div *ngIf="isGestionnaire || isAdmin">
+      <div class="table-container border-0 shadow-sm bg-white rounded-4 overflow-hidden" *ngIf="sinistresParStatut(['APPROVED', 'REJECTED', 'SETTLED']).length > 0; else emptyHistoryManager">
+        <table class="table mb-0 table-hover align-middle">
+          <thead class="bg-light">
+            <tr>
+              <th class="ps-4 border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Ref</th>
+              <th class="border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Incident</th>
+              <th class="border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Final Status</th>
+              <th class="text-end pe-4 border-0 py-3 text-uppercase small fw-bold text-muted tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of sinistresParStatut(['APPROVED', 'REJECTED', 'SETTLED'])" [ngClass]="{'opacity-75': s.statut === 'SETTLED'}">
+              <td class="ps-4 py-3 border-bottom"><span class="fw-bold text-dark fs-6">{{ s.numero }}</span></td>
+              <td class="py-3 border-bottom fw-bold text-dark">{{ s.titre }}</td>
+              <td class="py-3 border-bottom">
+                <span class="badge px-3 py-2 rounded-pill shadow-sm" [ngClass]="{
+                  'bg-success text-white': s.statut === 'APPROVED',
+                  'bg-danger text-white': s.statut === 'REJECTED',
+                  'bg-dark text-white': s.statut === 'SETTLED'
+                }">
+                  <i class="bi me-1" [ngClass]="s.statut === 'APPROVED' ? 'bi-check-circle-fill' : s.statut === 'REJECTED' ? 'bi-x-circle-fill' : 'bi-cash-coin'"></i>
+                  {{ s.statut === 'APPROVED' ? 'APPROVED' : s.statut === 'REJECTED' ? 'REJECTED' : 'PAID / SETTLED' }}
+                </span>
+              </td>
+              <td class="text-end pe-4 py-3 border-bottom">
+                <button class="btn btn-sm btn-light fw-bold shadow-sm rounded-pill px-3 me-2 text-dark" (click)="viewSinistre(s)" title="View Details"><i class="bi bi-eye"></i></button>
+                <button class="btn btn-sm btn-success fw-bold shadow-sm rounded-pill px-3 text-white" *ngIf="s.statut === 'APPROVED'" (click)="rendreDecision(s.id, 'SETTLED')">
+                  <i class="bi bi-cash-stack me-1"></i> Pay Claim
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #emptyHistoryManager>
+        <div class="p-5 text-center text-muted bg-white border border-dashed rounded-4">
+          <i class="bi bi-clock-history fs-1 d-block mb-3 text-secondary opacity-50"></i>
+          <h5 class="fw-bold text-dark">No history available</h5>
+          <p class="small">Completed and rejected claims will appear here.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- ================= DETAILED VIEW (MODAL-LIKE) ================= -->
+  <div *ngIf="selectedSinistre" class="modal-overlay animate-fade-in" style="z-index: 1050; padding: 2rem;">
+    <div class="container bg-white rounded-4 shadow-lg overflow-hidden position-relative p-0 d-flex flex-column" style="max-width: 1000px; max-height: 90vh;">
+      
+      <!-- Details Header -->
+      <div class="bg-light p-4 border-bottom d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+          <div class="icon-box bg-primary bg-opacity-10 text-primary" style="width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+            <i class="bi fs-4 bi-folder-fill"></i>
+          </div>
+          <div>
+            <h4 class="fw-bold mb-0 text-dark">Claim Details</h4>
+            <span class="text-muted small">Ref: {{ selectedSinistre.numero }}</span>
+          </div>
+        </div>
+        <button class="btn btn-light rounded-circle border shadow-sm" (click)="selectedSinistre = null"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <!-- Details Body (Scrollable) -->
+      <div class="p-4 p-md-5 overflow-auto flex-grow-1">
+        
+        <!-- Status Banner -->
+        <div class="p-4 rounded-4 border d-flex align-items-center justify-content-between mb-5 bg-white shadow-sm">
+          <div>
+            <p class="text-muted small fw-bold text-uppercase mb-1">Current Status</p>
+            <div class="d-flex align-items-center gap-2">
+              <span class="status-dot" [ngClass]="{
+                'bg-primary': selectedSinistre.statut === 'SUBMITTED',
+                'bg-warning': selectedSinistre.statut === 'UNDER_REVIEW' || selectedSinistre.statut === 'ADDITIONAL_INFORMATION_REQUIRED',
+                'bg-info': selectedSinistre.statut === 'EXPERT_ASSIGNED' || selectedSinistre.statut === 'UNDER_EXPERT_REVIEW',
+                'bg-success': selectedSinistre.statut === 'APPROVED' || selectedSinistre.statut === 'SETTLED',
+                'bg-danger': selectedSinistre.statut === 'REJECTED'
+              }"></span>
+              <h5 class="fw-bold mb-0" [ngClass]="{
+                'text-primary': selectedSinistre.statut === 'SUBMITTED',
+                'text-warning text-dark': selectedSinistre.statut === 'UNDER_REVIEW' || selectedSinistre.statut === 'ADDITIONAL_INFORMATION_REQUIRED',
+                'text-info': selectedSinistre.statut === 'EXPERT_ASSIGNED' || selectedSinistre.statut === 'UNDER_EXPERT_REVIEW',
+                'text-success': selectedSinistre.statut === 'APPROVED' || selectedSinistre.statut === 'SETTLED',
+                'text-danger': selectedSinistre.statut === 'REJECTED'
+              }">{{ selectedSinistre.statut }}</h5>
+            </div>
+          </div>
+          <i class="bi bi-activity fs-1 opacity-25 text-dark"></i>
+        </div>
+
+        <div class="row g-5">
+          <!-- Left Column: Incident Details -->
+          <div class="col-lg-7">
+            <h6 class="fw-bold text-uppercase text-muted small mb-3 tracking-wider">Incident Overview</h6>
+            <div class="card border rounded-4 shadow-sm mb-4 bg-white">
+              <div class="card-body p-4">
+                <h5 class="fw-bold text-dark mb-4">{{ selectedSinistre.titre }}</h5>
+                <div class="row g-4 mb-4">
+                  <div class="col-sm-6">
+                    <span class="text-muted small d-block mb-1"><i class="bi bi-calendar-event me-2"></i>Incident Date</span>
+                    <span class="fw-bold text-dark">{{ selectedSinistre.incidentDate | date:'longDate' }}</span>
+                  </div>
+                  <div class="col-sm-6">
+                    <span class="text-muted small d-block mb-1"><i class="bi bi-calendar-check me-2"></i>Reported On</span>
+                    <span class="fw-bold text-dark">{{ selectedSinistre.declarationDate | date:'longDate' }}</span>
+                  </div>
+                  <div class="col-12">
+                    <span class="text-muted small d-block mb-1"><i class="bi bi-geo-alt-fill me-2"></i>Location</span>
+                    <span class="fw-bold text-dark">{{ selectedSinistre.adresse || 'N/A' }}</span>
+                  </div>
+                </div>
+                
+                <h6 class="fw-bold text-muted small text-uppercase mb-2">Description</h6>
+                <div class="p-3 bg-light rounded-3 text-dark small border-start border-4 border-primary">
+                  {{ selectedSinistre.description }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Notes & Updates -->
+            <div *ngIf="selectedSinistre.commentaire" class="mb-4">
+              <h6 class="fw-bold text-uppercase text-muted small mb-3 tracking-wider">Manager Notes</h6>
+              <div class="alert alert-primary border-0 rounded-4 shadow-sm d-flex align-items-center gap-3">
+                <i class="bi bi-chat-quote-fill fs-3 text-primary opacity-50"></i>
+                <div class="small fw-semibold text-dark">{{ selectedSinistre.commentaire }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Insured & Expert Info -->
+          <div class="col-lg-5">
+            <h6 class="fw-bold text-uppercase text-muted small mb-3 tracking-wider">Policy Information</h6>
+            <div class="card border rounded-4 shadow-sm mb-4 bg-white">
+              <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-3 mb-4 border-bottom pb-3">
+                  <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
+                    <i class="bi bi-person-badge-fill fs-4"></i>
+                  </div>
+                  <div>
+                    <div class="fw-bold text-dark">{{ selectedSinistre.userEmail }}</div>
+                    <div class="small text-muted">CIN: <span class="fw-bold">{{ selectedSinistre.userCin }}</span></div>
+                  </div>
+                </div>
+
+                <div *ngIf="selectedSinistre.contrat as c" class="p-3 bg-light rounded-4 border">
+                  <div class="text-muted small text-uppercase fw-bold mb-1">Linked Contract</div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <div class="fw-bold text-primary mb-1">{{ c.numero }}</div>
+                      <div class="small fw-semibold text-dark">{{ c.type }} • {{ c.formule }}</div>
+                    </div>
+                    <i class="bi bi-file-earmark-lock2-fill fs-3 text-primary opacity-25"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="selectedSinistre.expertNom" class="card border rounded-4 shadow-sm mb-4 bg-white">
+              <div class="card-body p-4">
+                <h6 class="fw-bold text-uppercase text-muted small mb-3 border-bottom pb-2">Technical Expertise</h6>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <div class="bg-info bg-opacity-10 p-3 rounded-circle text-info">
+                    <i class="bi bi-person-gear fs-4"></i>
+                  </div>
+                  <div>
+                    <div class="fw-bold text-dark">{{ selectedSinistre.expertNom }}</div>
+                    <div class="small text-muted fw-bold"><i class="bi bi-telephone-fill me-1"></i>{{ selectedSinistre.expertTelephone }}</div>
+                  </div>
+                </div>
+                <div class="bg-info bg-opacity-10 text-info p-3 rounded-4 small fw-bold mb-3 d-flex align-items-center">
+                  <i class="bi bi-calendar-check-fill me-2 fs-5"></i>
+                  <span>{{ selectedSinistre.expertRendezVous || 'Appointment pending' }}</span>
+                </div>
+                <div *ngIf="selectedSinistre.rapportExpert" class="mt-3 border-top pt-3">
+                  <span class="text-muted small text-uppercase fw-bold d-block mb-2">Expert Conclusion</span>
+                  <p class="small mb-0 italic text-dark fw-semibold p-3 bg-light rounded-3 border-start border-3 border-info">
+                    "{{ selectedSinistre.rapportExpert }}"
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Details Footer (Sticky) -->
+      <div class="bg-light p-4 border-top d-flex justify-content-between align-items-center">
+        <div>
+          <a *ngIf="selectedSinistre.latitude && selectedSinistre.longitude"
+            [href]="'https://www.google.com/maps?q=' + selectedSinistre.latitude + ',' + selectedSinistre.longitude"
+            target="_blank" class="btn btn-outline-primary rounded-pill px-4 me-2 fw-bold bg-white">
+            <i class="bi bi-geo-alt-fill me-2"></i>Map
+          </a>
+          <a *ngIf="selectedSinistre.document" [href]="'http://localhost:8082/uploads/' + selectedSinistre.document" target="_blank" class="btn btn-outline-dark rounded-pill px-4 fw-bold bg-white">
+            <i class="bi bi-paperclip me-2"></i>Attachment
+          </a>
+        </div>
+        <button class="btn btn-dark rounded-pill px-5 fw-bold shadow-sm" (click)="selectedSinistre = null">
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

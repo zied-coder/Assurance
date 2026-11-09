@@ -1,0 +1,72 @@
+<!-- CHAT BUBBLE -->
+<div class="chat-wrapper" [class.open]="isOpen">
+  
+  <button class="chat-toggle" (click)="toggleChat()">
+    <i class="bi" [class.bi-chat-right-text-fill]="!isOpen" [class.bi-x-lg]="isOpen"></i>
+    <span class="pulse-ring" *ngIf="!isOpen"></span>
+  </button>
+
+  <!-- CHAT WINDOW -->
+  <div class="chat-window premium-glass">
+    <div class="chat-header">
+      <div class="bot-info">
+        <div class="avatar-premium">
+          <i class="bi bi-shield-check"></i>
+        </div>
+        <div class="title-area">
+          <h3>Conseiller Assurances</h3>
+          <span class="status"><i class="bi bi-lock-fill me-1"></i> Connexion Sécurisée</span>
+        </div>
+      </div>
+      <button class="clear-btn" (click)="clearMessages()" title="Nouvelle conversation">
+        <i class="bi bi-arrow-clockwise"></i>
+      </button>
+    </div>
+
+    <div class="chat-messages">
+      <div class="welcome-banner">
+        <p>Espace d'assistance personnalisé</p>
+      </div>
+
+      <div *ngFor="let msg of messages" class="message-row" [class.user]="msg.sender === 'user'">
+        <div class="message-bubble">
+          {{ msg.text }}
+          <span class="time">{{ msg.time | date:'HH:mm' }}</span>
+        </div>
+      </div>
+      
+      <div *ngIf="isLoading" class="message-row">
+        <div class="message-bubble typing">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="quick-actions" *ngIf="messages.length < 5">
+      <button class="action-pill" (click)="quickAction('Déclarer un sinistre')">
+        <i class="bi bi-car-front-fill text-warning"></i> Sinistre
+      </button>
+      <button class="action-pill" (click)="quickAction('Voir mes contrats')">
+        <i class="bi bi-file-earmark-text-fill text-primary"></i> Contrats
+      </button>
+      <button class="action-pill" (click)="quickAction('Simulation tarifaire')">
+        <i class="bi bi-calculator-fill text-success"></i> Simulation
+      </button>
+    </div>
+
+    <div class="chat-footer">
+      <input 
+        type="text" 
+        placeholder="Écrivez votre message ici..." 
+        [(ngModel)]="userInput" 
+        (keyup.enter)="sendMessage()"
+      >
+      <button class="send-btn" (click)="sendMessage()" [disabled]="!userInput.trim()">
+        <i class="bi bi-send-fill"></i>
+      </button>
+    </div>
+  </div>
+</div>

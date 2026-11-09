@@ -1,0 +1,146 @@
+/* Premium Insurance Styles */
+
+.contrats-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  padding: 3.5rem 0;
+  color: white;
+  margin-bottom: 2rem;
+}
+
+/* Gradients for Card Headers (Old - kept for reference if needed elsewhere) */
+.bg-auto-gradient { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); }
+.bg-habitation-gradient { background: linear-gradient(135deg, #134e5e 0%, #71b280 100%); }
+.bg-sante-gradient { background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); }
+.bg-vie-gradient { background: linear-gradient(135deg, #b224ef 0%, #7579ff 100%); }
+.bg-default-gradient { background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%); }
+
+/* Modern Card Design Elements */
+.card-accent-line {
+  height: 4px;
+  width: 100%;
+}
+.icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Colors for specific insurance types */
+.bg-auto { background-color: #3b82f6; }
+.text-auto { color: #3b82f6; }
+.bg-auto-light { background-color: rgba(59, 130, 246, 0.1); }
+
+.bg-habitation { background-color: #1e40af; }
+.text-habitation { color: #1e40af; }
+.bg-habitation-light { background-color: rgba(30, 64, 175, 0.1); }
+
+.bg-sante { background-color: #ef4444; }
+.text-sante { color: #ef4444; }
+.bg-sante-light { background-color: rgba(239, 68, 68, 0.1); }
+
+.bg-vie { background-color: #8b5cf6; }
+.text-vie { color: #8b5cf6; }
+.bg-vie-light { background-color: rgba(139, 92, 246, 0.1); }
+
+.bg-default { background-color: #64748b; }
+.text-default { color: #64748b; }
+.bg-default-light { background-color: rgba(100, 116, 139, 0.1); }
+
+.card-insurance {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.03);
+}
+
+.card-insurance:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.tracking-wider {
+    letter-spacing: 0.05em;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+/* Glassmorphism Details Panel */
+.glass-panel {
+    background: white;
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+}
+
+/* Data Tables */
+.table-premium th {
+    background-color: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 1.25rem 1rem;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.table-premium td {
+    padding: 1.25rem 1rem;
+    vertical-align: middle;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* Badges Soft */
+.badge-soft-success { background-color: #dcfce7; color: #166534; }
+.badge-soft-danger { background-color: #fee2e2; color: #991b1b; }
+.badge-soft-warning { background-color: #fef3c7; color: #92400e; }
+.badge-soft-info { background-color: #e0f2fe; color: #0369a1; }
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content-custom {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 650px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: none;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.grayscale {
+    filter: grayscale(1);
+    opacity: 0.6;
+}
+

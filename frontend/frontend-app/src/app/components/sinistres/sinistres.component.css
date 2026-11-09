@@ -1,0 +1,246 @@
+.sinistres-header {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  padding: 3rem 0;
+  color: white;
+  margin-bottom: 2rem;
+}
+
+.card-stat {
+  border-radius: 16px;
+  transition: transform 0.2s ease;
+  background: white;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.card-stat:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+}
+
+.table-container {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.custom-table thead {
+  background-color: #f8fafc;
+}
+
+.custom-table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  padding: 1rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.custom-table td {
+  padding: 1.25rem 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+
+.btn-bna {
+  background-color: #000;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.6rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-bna:hover {
+  background-color: #333;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.btn-action-sm {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  margin: 0 4px;
+  transition: all 0.2s;
+  border: 1px solid #e2e8f0;
+  background: white;
+}
+
+.btn-action-sm:hover {
+  background-color: #f8fafc;
+  transform: scale(1.1);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.form-card {
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.sinistres-header {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  padding: 3rem 0;
+  color: white;
+  margin-bottom: 2rem;
+}
+
+.card-stat {
+  border-radius: 16px;
+  transition: transform 0.2s ease;
+  background: white;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.card-stat:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+}
+
+.table-container {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.custom-table thead {
+  background-color: #f8fafc;
+}
+
+.custom-table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  padding: 1rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.custom-table td {
+  padding: 1.25rem 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* ===== BOUTON ===== */
+.btn-bna {
+  background-color: #000;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.6rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-bna:hover {
+  background-color: #333;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* ===== ICON ===== */
+.icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* ===== ACTION BUTTON ===== */
+.btn-action-sm {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  margin: 0 4px;
+  transition: all 0.2s;
+  border: 1px solid #e2e8f0;
+  background: white;
+}
+
+.btn-action-sm:hover {
+  background-color: #f8fafc;
+  transform: scale(1.1);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* ===== FORM ===== */
+.form-card {
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+/* ===== ANIMATION ===== */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===================================== */
+/* 🔥 CORRECTION STATUT SINISTRE (IMPORTANT) */
+/* ===================================== */
+
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* EN ATTENTE */
+.status-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+/* ACCEPTE */
+.status-approved {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+/* REFUSE */
+.status-rejected {
+  background-color: #fee2e2;
+  color: #991b1b;
+}

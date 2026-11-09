@@ -1,0 +1,494 @@
+<div class="container mt-4">
+
+  <!-- ================= STEP 1 ================= -->
+  <div *ngIf="step === 1" class="card p-4 shadow-sm">
+
+    <h3>📝 Création Contrat</h3>
+
+    <input class="form-control mb-2"
+           placeholder="CIN Client"
+           [(ngModel)]="formStep1.cin">
+
+    <select class="form-select mb-3"
+            [(ngModel)]="formStep1.type"
+            (change)="formStep1.formule=''">
+
+      <option value="">Choisir type</option>
+      <option value="AUTO">Automobile</option>
+      <option value="HABITATION">Habitation</option>
+      <option value="SANTE">Santé</option>
+      <option value="VIE">Prévoyance / Vie</option>
+
+    </select>
+
+    <select class="form-select mb-3"
+            [(ngModel)]="formStep1.formule">
+
+      <option value="">Choisir formule</option>
+
+      <ng-container *ngIf="formStep1.type === 'AUTO'">
+        <option value="THIRD_PARTY">TIERS (Essentiel)</option>
+        <option value="EXTENDED_THIRD_PARTY">TIERS ÉTENDU (Vol & Bris de glace)</option>
+        <option value="COMPREHENSIVE">TOUS RISQUES (Standard)</option>
+        <option value="PREMIUM">TOUS RISQUES PREMIUM (Complet)</option>
+      </ng-container>
+
+      <ng-container *ngIf="formStep1.type === 'HABITATION'">
+        <option value="BASIC">BASIQUE</option>
+        <option value="STANDARD">STANDARD (Moyen)</option>
+        <option value="PREMIUM">PREMIUM (Complet)</option>
+      </ng-container>
+
+      <ng-container *ngIf="formStep1.type === 'SANTE'">
+        <option value="BASIQUE">BASIQUE</option>
+        <option value="MOYEN">MOYEN</option>
+        <option value="PREMIUM">PREMIUM</option>
+      </ng-container>
+
+      <ng-container *ngIf="formStep1.type === 'VIE'">
+        <option value="BASIQUE">BASIQUE</option>
+        <option value="MOYEN">MOYEN</option>
+        <option value="PREMIUM">PREMIUM</option>
+      </ng-container>
+
+    </select>
+
+    <!-- Durée du contrat -->
+    <label class="form-label fw-semibold text-muted small text-uppercase mt-2">Durée du contrat</label>
+    <select class="form-select mb-3"
+            [(ngModel)]="formStep1.duree">
+      <option value="">Choisir la durée</option>
+      <option value="1">1 an</option>
+      <option value="2">2 ans</option>
+    </select>
+
+    <!-- Fréquence de paiement -->
+    <label class="form-label fw-semibold text-muted small text-uppercase">Fréquence de paiement</label>
+    <select class="form-select mb-3"
+            [(ngModel)]="formStep1.frequencePaiement">
+      <option value="">Choisir la fréquence</option>
+      <option value="MENSUEL">Mensuel (chaque mois)</option>
+      <option value="TRIMESTRIEL">Trimestriel (tous les 3 mois)</option>
+      <option value="SEMESTRIEL">Semestriel (tous les 6 mois)</option>
+      <option value="ANNUEL">Annuel (une fois par an)</option>
+    </select>
+
+    <button class="btn btn-primary"
+            (click)="createContrat()"
+            [disabled]="!formStep1.cin || !formStep1.type || !formStep1.formule || !formStep1.duree || !formStep1.frequencePaiement">
+      Suivant
+    </button>
+
+  </div>
+
+  <!-- ================= STEP 2 ================= -->
+  <div *ngIf="step === 2" class="card p-4 shadow-sm">
+
+    <h3>📦 Objet assuré</h3>
+
+    <!-- AUTO -->
+    <div *ngIf="formStep1.type === 'AUTO'">
+
+      <input class="form-control mb-2"
+             placeholder="Marque"
+             [(ngModel)]="formStep2.marque">
+
+      <input class="form-control mb-2"
+             placeholder="Modèle"
+             [(ngModel)]="formStep2.modele">
+
+      <div class="card bg-light border-0 p-3 mb-3">
+        <label class="fw-bold small text-muted text-uppercase mb-2">Plaque d'immatriculation</label>
+        
+        <select class="form-select mb-2" [(ngModel)]="formStep2.registrationType" (change)="onRegistrationTypeChange()">
+          <option value="TU">Standard (TU)</option>
+          <option value="RS">RS</option>
+          <option value="FSR">FSR</option>
+          <option value="ETAT">État (ETAT)</option>
+        </select>
+
+        <!-- TU FORMAT -->
+        <div *ngIf="formStep2.registrationType === 'TU'" class="d-flex align-items-center gap-2">
+          <input class="form-control text-center fw-bold" 
+                 type="text" 
+                 maxlength="3"
+                 placeholder="123" 
+                 [(ngModel)]="formStep2.immatriculationPart1"
+                 style="max-width: 80px;">
+          <span class="badge bg-dark text-white px-3 py-2 fs-6">TUNES</span>
+          <input class="form-control text-center fw-bold" 
+                 type="text" 
+                 maxlength="4"
+                 placeholder="4567" 
+                 [(ngModel)]="formStep2.immatriculationPart2"
+                 style="max-width: 100px;">
+        </div>
+
+        <!-- ETAT FORMAT -->
+        <div *ngIf="formStep2.registrationType === 'ETAT'" class="d-flex align-items-center gap-2">
+          <input class="form-control text-center fw-bold" 
+                 type="text" 
+                 maxlength="2"
+                 placeholder="12" 
+                 [(ngModel)]="formStep2.immatriculationPart1"
+                 style="max-width: 70px;">
+          <span class="badge bg-danger text-white px-3 py-2 fs-6">ETAT</span>
+          <input class="form-control text-center fw-bold" 
+                 type="text" 
+                 maxlength="6"
+                 placeholder="123456" 
+                 [(ngModel)]="formStep2.immatriculationPart2"
+                 style="max-width: 120px;">
+        </div>
+
+        <!-- RS / FSR FORMAT -->
+        <div *ngIf="formStep2.registrationType === 'RS' || formStep2.registrationType === 'FSR'">
+          <div class="input-group">
+            <span class="input-group-text bg-dark text-white fw-bold border-0">{{ formStep2.registrationType }}</span>
+            <input class="form-control fw-bold" 
+                   type="text" 
+                   maxlength="6"
+                   placeholder="123456" 
+                   [(ngModel)]="formStep2.immatriculation">
+          </div>
+        </div>
+
+        <!-- PREVIEW -->
+        <div class="mt-2 text-center text-muted small" *ngIf="finalImmatriculation">
+          Aperçu : <span class="badge bg-secondary ms-1 fs-6">{{ finalImmatriculation }}</span>
+        </div>
+      </div>
+
+      <input class="form-control mb-2"
+             type="number"
+             placeholder="Âge véhicule"
+             [(ngModel)]="formStep2.ageVehicule">
+
+      <input class="form-control mb-2"
+             type="number"
+             placeholder="Puissance fiscale"
+             [(ngModel)]="formStep2.puissanceFiscale">
+
+      <input class="form-control mb-2"
+             type="number"
+             placeholder="Puissance moteur"
+             [(ngModel)]="formStep2.puissanceMoteur">
+
+      <input class="form-control mb-2"
+             type="number"
+             placeholder="Valeur véhicule"
+             [(ngModel)]="formStep2.valeurVehicule">
+
+    </div>
+
+    <!-- HABITATION -->
+    <div *ngIf="formStep1.type === 'HABITATION'">
+
+      <input class="form-control mb-2"
+             placeholder="Adresse du bien"
+             [(ngModel)]="formStep2.adresseBien">
+
+      <input class="form-control mb-2"
+             type="number"
+             placeholder="Valeur du bien"
+             [(ngModel)]="formStep2.valeurBien">
+
+      <input class="form-control mb-2"
+             type="number"
+             placeholder="Âge du bâtiment (Années)"
+             [(ngModel)]="formStep2.ageBatiment">
+
+      <select class="form-select mb-2" [(ngModel)]="formStep2.niveauSecurite">
+         <option value="">Niveau Sécurité</option>
+         <option value="BAS">BAS (Pas d'alarme)</option>
+         <option value="MOYEN">MOYEN (Alarme simple)</option>
+         <option value="HAUT">HAUT (Télésurveillance)</option>
+      </select>
+
+      <select class="form-select mb-2" [(ngModel)]="formStep2.zoneGeo">
+         <option value="">Zone Géographique</option>
+         <option value="URBAINE">Urbaine (Standard)</option>
+         <option value="RURALE">Rurale</option>
+         <option value="RISQUE">Zone à Risque élevé</option>
+      </select>
+
+    </div>
+
+    <!-- SANTE / VIE -->
+    <div *ngIf="formStep1.type === 'SANTE' || formStep1.type === 'VIE'">
+      
+      <div class="alert alert-primary mb-3">👤 Informations de l'assuré</div>
+
+      <input class="form-control mb-2"
+             type="number"
+             placeholder="Âge de l'assuré"
+             [(ngModel)]="formStep2.ageAssure">
+
+      <select *ngIf="formStep1.type === 'SANTE'" class="form-select mb-2" [(ngModel)]="formStep2.antecedentsMedicaux">
+         <option value="">Antécédents Médicaux</option>
+         <option value="AUCUN">AUCUN</option>
+         <option value="CHRONIQUE">CHRONIQUE (ex: Diabète)</option>
+         <option value="GRAVE">GRAVE</option>
+      </select>
+
+      <select *ngIf="formStep1.type === 'SANTE'" class="form-select mb-3" [(ngModel)]="formStep2.profession">
+         <option value="">Niveau de risque Professionnel</option>
+         <option value="STANDARD">BAS (Travail de bureau)</option>
+         <option value="RISQUE">ÉLEVÉ (Manuel, Chantier, Risque)</option>
+      </select>
+
+      <!-- 🩺 MEDICAL SPECIALTIES -->
+      <div *ngIf="formStep1.type === 'SANTE'" class="mb-4">
+        <label class="fw-bold small text-muted text-uppercase mb-2 d-block">Spécialités Médicales souhaitées</label>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" 
+                  class="btn btn-sm rounded-pill px-3 py-2"
+                  [ngClass]="formStep2.specialitesMedicales.includes('Médecine Générale') ? 'btn-primary' : 'btn-outline-secondary'"
+                  (click)="toggleSpecialite('Médecine Générale')">
+            Médecine Générale
+          </button>
+          <button type="button" 
+                  class="btn btn-sm rounded-pill px-3 py-2"
+                  [ngClass]="formStep2.specialitesMedicales.includes('Ophtalmologie') ? 'btn-primary' : 'btn-outline-secondary'"
+                  (click)="toggleSpecialite('Ophtalmologie')">
+            Ophtalmologie
+          </button>
+          <button type="button" 
+                  class="btn btn-sm rounded-pill px-3 py-2"
+                  [ngClass]="formStep2.specialitesMedicales.includes('Dermatologie') ? 'btn-primary' : 'btn-outline-secondary'"
+                  (click)="toggleSpecialite('Dermatologie')">
+            Dermatologie
+          </button>
+          <button type="button" 
+                  class="btn btn-sm rounded-pill px-3 py-2"
+                  [ngClass]="formStep2.specialitesMedicales.includes('Dentisterie') ? 'btn-primary' : 'btn-outline-secondary'"
+                  (click)="toggleSpecialite('Dentisterie')">
+            Dentisterie
+          </button>
+          <button type="button" 
+                  class="btn btn-sm rounded-pill px-3 py-2"
+                  [ngClass]="formStep2.specialitesMedicales.includes('Autres') ? 'btn-primary' : 'btn-outline-secondary'"
+                  (click)="toggleSpecialite('Autres')">
+            Autres spécialités
+          </button>
+        </div>
+      </div>
+
+      <!-- 🏥 HOSPITAL / SURGICAL -->
+      <div *ngIf="formStep1.type === 'SANTE'" class="card bg-light border-0 p-3 mb-4">
+        <div class="form-check form-switch d-flex justify-content-between align-items-center ps-0">
+          <div>
+            <label class="form-check-label fw-bold text-dark d-block">Couverture Chirurgicale & Hospitalière</label>
+            <small class="text-muted">Séjours hospitaliers, opérations et interventions lourdes.</small>
+          </div>
+          <input class="form-check-input ms-0" 
+                 type="checkbox" 
+                 style="width: 3em; height: 1.5em; cursor: pointer;"
+                 [(ngModel)]="formStep2.couvertureHospitaliere">
+        </div>
+      </div>
+
+      <select *ngIf="formStep1.type === 'VIE'" class="form-select mb-2" [(ngModel)]="formStep2.etatSante">
+         <option value="">État de santé général</option>
+         <option value="BON">BON</option>
+         <option value="FRAGILE">FRAGILE</option>
+      </select>
+
+      <input *ngIf="formStep1.type === 'VIE'" class="form-control mb-2"
+             type="number"
+             placeholder="Capital Assuré (TND)"
+             [(ngModel)]="formStep2.capitalAssure">
+
+    </div>
+
+    <!-- 🔥 BUTTON SAFE (IMPORTANT) -->
+    <button class="btn btn-success mt-2"
+            (click)="addObjet()"
+            [disabled]="
+              (formStep1.type === 'AUTO' && (!formStep2.marque || !formStep2.modele || !finalImmatriculation || formStep2.valeurVehicule == null)) ||
+              (formStep1.type === 'HABITATION' && (!formStep2.adresseBien || formStep2.valeurBien == null || !formStep2.niveauSecurite || !formStep2.zoneGeo)) ||
+              (formStep1.type === 'SANTE' && (formStep2.ageAssure == null || !formStep2.antecedentsMedicaux || !formStep2.profession)) ||
+              (formStep1.type === 'VIE' && (formStep2.ageAssure == null || !formStep2.etatSante || formStep2.capitalAssure == null))
+            ">
+      Continuer
+    </button>
+
+  </div>
+
+  <!-- ================= STEP 3 ================= -->
+  <div *ngIf="step === 3" class="card p-4 shadow-sm">
+
+    <!-- Success Header -->
+    <div class="text-center mb-4">
+      <div class="mb-3" style="font-size: 3.5rem;">✅</div>
+      <h3 class="fw-bold text-success mb-1">Contrat créé avec succès !</h3>
+      <p class="text-muted small">Votre contrat a été enregistré. Voici le récapitulatif complet.</p>
+    </div>
+
+    <!-- Key Info Row -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="p-3 rounded-3 border border-light text-center" style="background: #f8fafc;">
+          <span class="text-muted small d-block text-uppercase mb-1" style="font-size: 0.7rem;">Type</span>
+          <span class="badge bg-primary px-3 py-2 fs-6">{{ details?.contrat?.type }}</span>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="p-3 rounded-3 border border-light text-center" style="background: #f8fafc;">
+          <span class="text-muted small d-block text-uppercase mb-1" style="font-size: 0.7rem;">Formule</span>
+          <strong class="text-dark">{{ details?.contrat?.formule }}</strong>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="p-3 rounded-3 border border-light text-center" style="background: #f8fafc;">
+          <span class="text-muted small d-block text-uppercase mb-1" style="font-size: 0.7rem;">Statut</span>
+          <span class="badge"
+                [ngClass]="{'bg-success': details?.contrat?.statut === 'ACTIF', 'bg-warning text-dark': details?.contrat?.statut === 'EN_ATTENTE', 'bg-danger': details?.contrat?.statut === 'RESILIE'}">
+            {{ details?.contrat?.statut }}
+          </span>
+        </div>
+      </div>
+      <div class="col-6 col-md-3" *ngIf="details?.contrat?.riskLevel">
+        <div class="p-3 rounded-3 border border-light text-center" style="background: #f8fafc;">
+          <span class="text-muted small d-block text-uppercase mb-1" style="font-size: 0.7rem;">Niveau de Risque</span>
+          <span class="badge"
+                [ngClass]="{'bg-success': details.contrat.riskLevel === 'FAIBLE', 'bg-warning text-dark': details.contrat.riskLevel === 'MODÉRÉ', 'bg-danger': details.contrat.riskLevel === 'ÉLEVÉ' || details.contrat.riskLevel === 'ELEVÉ'}">
+            {{ details.contrat.riskLevel }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prime -->
+    <div class="alert border-0 mb-4 d-flex align-items-center justify-content-between"
+         style="background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border-left: 4px solid #4caf50 !important;">
+      <div>
+        <span class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">Prime Totale Calculée</span>
+        <div class="fw-bold text-success" style="font-size: 1.6rem;">{{ details?.contrat?.prime }} DT</div>
+      </div>
+      <i class="bi bi-currency-exchange text-success" style="font-size: 2rem; opacity: 0.4;"></i>
+    </div>
+
+    <!-- ✅ Duration & Payment Schedule -->
+    <div class="card border-0 mb-4" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; border-radius: 16px;">
+      <div class="card-body p-4">
+        <h6 class="fw-bold text-uppercase mb-4" style="font-size: 0.75rem; letter-spacing: 0.1em; opacity: 0.8;">
+          <i class="bi bi-calendar-event me-2"></i>Durée &amp; Calendrier de Paiement
+        </h6>
+        <div class="row g-3">
+
+          <!-- Date de début -->
+          <div class="col-6 col-md-3">
+            <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.1);">
+              <small class="d-block text-white-50 text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.06em;">Date de début</small>
+              <strong class="text-white">{{ details?.contrat?.dateDebut | date:'dd/MM/yyyy' }}</strong>
+            </div>
+          </div>
+
+          <!-- Date de fin -->
+          <div class="col-6 col-md-3">
+            <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.1);">
+              <small class="d-block text-white-50 text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.06em;">Date de fin</small>
+              <strong class="text-white">{{ details?.contrat?.dateFin | date:'dd/MM/yyyy' }}</strong>
+            </div>
+          </div>
+
+          <!-- Durée -->
+          <div class="col-6 col-md-3">
+            <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.1);">
+              <small class="d-block text-white-50 text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.06em;">Durée totale</small>
+              <strong class="text-white">
+                <i class="bi bi-hourglass-split me-1"></i>{{ details?.contrat?.duree }} an(s)
+              </strong>
+            </div>
+          </div>
+
+          <!-- Fréquence de paiement -->
+          <div class="col-6 col-md-3">
+            <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);">
+              <small class="d-block text-white-50 text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.06em;">Mode de paiement</small>
+              <strong class="text-white">
+                <i class="bi bi-arrow-repeat me-1"></i>
+                <ng-container [ngSwitch]="details?.contrat?.frequencePaiement">
+                  <span *ngSwitchCase="'MENSUEL'">Mensuel</span>
+                  <span *ngSwitchCase="'TRIMESTRIEL'">Trimestriel</span>
+                  <span *ngSwitchCase="'SEMESTRIEL'">Semestriel</span>
+                  <span *ngSwitchCase="'ANNUEL'">Annuel</span>
+                  <span *ngSwitchDefault>{{ details?.contrat?.frequencePaiement }}</span>
+                </ng-container>
+              </strong>
+              <small class="text-white-50 d-block mt-1">
+                <ng-container [ngSwitch]="details?.contrat?.frequencePaiement">
+                  <span *ngSwitchCase="'MENSUEL'">— chaque mois</span>
+                  <span *ngSwitchCase="'TRIMESTRIEL'">— tous les 3 mois</span>
+                  <span *ngSwitchCase="'SEMESTRIEL'">— tous les 6 mois</span>
+                  <span *ngSwitchCase="'ANNUEL'">— une fois par an</span>
+                </ng-container>
+              </small>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Next Payment Date highlight -->
+        <div class="mt-3 p-3 rounded-3 d-flex align-items-center justify-content-between"
+             style="background: rgba(255, 193, 7, 0.15); border: 1px solid rgba(255, 193, 7, 0.4);">
+          <div>
+            <small class="text-white-50 text-uppercase d-block" style="font-size: 0.65rem; letter-spacing: 0.06em;">Prochaine échéance de paiement</small>
+            <strong class="text-warning fs-5">{{ details?.contrat?.dateProchainPaiement | date:'dd MMMM yyyy' }}</strong>
+          </div>
+          <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">
+            <i class="bi bi-bell-fill me-1"></i>Rappel
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insured Objects -->
+    <h5 class="fw-bold mb-3">📦 Objets assurés</h5>
+
+    <div *ngIf="details?.objets?.length > 0; else noObj">
+
+      <p *ngFor="let o of details.objets">
+
+        <span *ngIf="o.type === 'AUTO'">
+          🚗 {{ o.marque }} - {{ o.modele }} |
+          {{ o.immatriculation }} |
+          {{ o.valeurVehicule }} DT
+        </span>
+
+        <span *ngIf="o.type === 'HABITATION'">
+          🏠 {{ o.adresseBien }} | {{ o.valeurBien }} DT
+        </span>
+
+        <span *ngIf="o.type === 'SANTE'">
+          👤 Assuré : {{ o.ageAssure }} ans | 
+          <i class="bi bi-heart-pulse text-danger ms-1"></i> {{ o.specialitesMedicales?.join(', ') || 'Soins de base' }} |
+          <span *ngIf="o.couvertureHospitaliere" class="text-success fw-bold ms-1"><i class="bi bi-hospital"></i> Hospitalisation Inclus</span>
+        </span>
+
+      </p>
+
+    </div>
+
+    <ng-template #noObj>
+      <p class="text-muted">Aucun objet enregistré</p>
+    </ng-template>
+
+    <!-- Guarantees -->
+    <h5 class="mt-3 fw-bold">🛡️ Garanties (Couverture Dynamique)</h5>
+    <ul class="list-group mb-4">
+      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let g of details?.garanties">
+        {{ g.nom }}
+        <span class="badge bg-primary rounded-pill">{{ g.plafond }} DT</span>
+      </li>
+      <li class="list-group-item text-muted" *ngIf="!details?.garanties?.length">Aucune garantie</li>
+    </ul>
+
+    <a routerLink="/mes-contrats" class="btn btn-primary px-5 py-2 fw-bold">
+      <i class="bi bi-arrow-left me-2"></i>Retour à mes contrats
+    </a>
+
+  </div>
+
+</div>

@@ -1,0 +1,137 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+  padding-bottom: 5rem;
+}
+
+.container {
+  max-width: 1200px;
+}
+
+/* HEADER SECTION */
+h2 {
+  color: #0f172a;
+  letter-spacing: -0.5px;
+}
+
+.btn-primary {
+  background: #1e40af;
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: #1e3a8a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
+}
+
+/* CARDS (Creation & Edit) */
+.card {
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-label {
+  color: #64748b;
+}
+
+.form-control:focus {
+  border-color: #1e40af;
+  box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1);
+}
+
+/* TABLE STYLES */
+.table-container {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f0f9ff !important;
+}
+
+.table td {
+  padding: 1.25rem 1rem;
+  color: #334155;
+  font-size: 0.9375rem;
+  vertical-align: middle;
+}
+
+/* AVATAR ICON */
+.bg-primary.bg-opacity-10 {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+/* BADGES */
+.badge {
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.bg-danger { background-color: #fee2e2 !important; color: #991b1b !important; }
+.bg-primary { background-color: #e0f2fe !important; color: #0369a1 !important; }
+.bg-success { background-color: #dcfce7 !important; color: #166534 !important; }
+
+/* ACTION BUTTONS */
+.btn-outline-primary {
+  border-color: #e2e8f0;
+  color: #1e40af;
+}
+
+.btn-outline-primary:hover {
+  background: #1e40af;
+  border-color: #1e40af;
+  color: white;
+}
+
+.btn-outline-danger {
+  border-color: #fee2e2;
+  color: #dc2626;
+}
+
+.btn-outline-danger:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: white;
+}

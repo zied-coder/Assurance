@@ -1,0 +1,159 @@
+<!-- ══════════ HEADER BANNER ══════════ -->
+<div class="dashboard-header" style="position:relative;">
+  <div class="container position-relative" style="z-index:1;">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <p class="mb-1" style="color:rgba(255,255,255,0.7); font-size:0.8rem; font-weight:600; letter-spacing:2px; text-transform:uppercase;">
+          {{ 'navbar.espace_client' | translate }}
+        </p>
+        <h1 class="fw-bold mb-1" style="color:white; font-size:2rem; letter-spacing:-0.5px;">
+          {{ 'dashboard.user_welcome' | translate }}
+        </h1>
+        <p class="mb-0" style="color:rgba(255,255,255,0.75);">
+          {{ 'dashboard.user_subtitle' | translate }}
+        </p>
+      </div>
+      <div class="d-none d-md-flex align-items-center gap-2"
+           style="background:rgba(255,255,255,0.1); border-radius:16px; padding:0.75rem 1.25rem; border:1px solid rgba(255,255,255,0.15);">
+        <img src="assets/images/bna-logo.png" alt="Assurances"
+             style="height:44px; width:44px; border-radius:10px; object-fit:contain; border:2px solid rgba(255,255,255,0.3); background:white; padding:2px;">
+        <div class="text-white ms-1">
+          <div style="font-weight:800; font-size:1.1rem; line-height:1;">Assurances</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bna-bottom-accent" style="position:absolute; bottom:0; left:0; right:0;"></div>
+</div>
+
+<!-- ══════════ MAIN CONTENT ══════════ -->
+<div class="container py-4">
+
+  <!-- KPI STATS -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-4">
+      <div class="bna-stat-card">
+        <div class="d-flex align-items-center gap-3">
+          <div class="icon-circle bg-soft-blue mb-0" style="flex-shrink:0;">
+            <i class="bi bi-file-earmark-text"></i>
+          </div>
+          <div>
+            <div style="font-size:0.78rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">{{ 'dashboard.active_contracts' | translate }}</div>
+            <div style="font-size:2rem; font-weight:800; color:#2B3990; line-height:1;">{{ contratCount }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="bna-stat-card">
+        <div class="d-flex align-items-center gap-3">
+          <div class="icon-circle bg-soft-yellow mb-0" style="flex-shrink:0;">
+            <i class="bi bi-exclamation-triangle"></i>
+          </div>
+          <div>
+            <div style="font-size:0.78rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">{{ 'dashboard.pending_claims' | translate }}</div>
+            <div style="font-size:2rem; font-weight:800; color:#c47800; line-height:1;">{{ sinistreCount }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="bna-stat-card">
+        <div class="d-flex align-items-center gap-3">
+          <div class="icon-circle bg-soft-green mb-0" style="flex-shrink:0;">
+            <i class="bi bi-chat-dots"></i>
+          </div>
+          <div>
+            <div style="font-size:0.78rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">{{ 'dashboard.open_requests' | translate }}</div>
+            <div style="font-size:2rem; font-weight:800; color:#00843D; line-height:1;">{{ demandeCount }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION TITLE -->
+  <h4 class="fw-bold mb-4" style="color:#1a1a2e;">
+    <span style="border-left:4px solid #2B3990; padding-left:0.75rem;">{{ 'dashboard.what_to_do' | translate }}</span>
+  </h4>
+
+  <!-- ACTION CARDS -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-6 col-lg-3">
+      <div class="bna-action-card">
+        <div class="card-body">
+          <div class="icon-circle bg-soft-blue"><i class="bi bi-shield-check"></i></div>
+          <h5 class="fw-bold mb-2">{{ 'dashboard.view_contracts' | translate }}</h5>
+          <p class="text-muted small mb-0">{{ 'dashboard.view_contracts_desc' | translate }}</p>
+        </div>
+        <button class="card-footer-btn" routerLink="/mes-contrats">
+          {{ 'dashboard.btn_view_contracts' | translate }} <i class="bi bi-arrow-right-short ms-1"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="bna-action-card">
+        <div class="card-body">
+          <div class="icon-circle bg-soft-yellow"><i class="bi bi-lightning-charge"></i></div>
+          <h5 class="fw-bold mb-2">{{ 'dashboard.manage_claims' | translate }}</h5>
+          <p class="text-muted small mb-0">{{ 'dashboard.manage_claims_desc' | translate }}</p>
+        </div>
+        <button class="card-footer-btn" routerLink="/sinistres">
+          {{ 'dashboard.btn_manage_claims' | translate }} <i class="bi bi-arrow-right-short ms-1"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="bna-action-card">
+        <div class="card-body">
+          <div class="icon-circle bg-soft-green"><i class="bi bi-headset"></i></div>
+          <h5 class="fw-bold mb-2">{{ 'dashboard.support' | translate }}</h5>
+          <p class="text-muted small mb-0">{{ 'dashboard.support_desc' | translate }}</p>
+        </div>
+        <button class="card-footer-btn" routerLink="/reclamations">
+          {{ 'dashboard.btn_support' | translate }} <i class="bi bi-arrow-right-short ms-1"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="bna-action-card">
+        <div class="card-body">
+          <div class="icon-circle" style="background:#fff0f0; color:#b30000;"><i class="bi bi-person-gear"></i></div>
+          <h5 class="fw-bold mb-2">{{ 'dashboard.profile' | translate }}</h5>
+          <p class="text-muted small mb-0">{{ 'dashboard.profile_desc' | translate }}</p>
+        </div>
+        <button class="card-footer-btn" routerLink="/profile">
+          {{ 'dashboard.btn_profile' | translate }} <i class="bi bi-arrow-right-short ms-1"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- URGENCY BANNER -->
+  <div class="mb-5">
+    <div class="p-4 d-flex flex-md-row flex-column justify-content-between align-items-center gap-3"
+         style="border-radius:20px; background:linear-gradient(135deg,#2B3990,#1a2472); box-shadow:0 8px 32px rgba(43,57,144,0.2);">
+      <div class="text-white">
+        <h5 class="fw-bold mb-1">
+          <i class="bi bi-telephone-fill me-2" style="color:#FFD100;"></i>{{ 'common.urgency' | translate }}
+        </h5>
+        <p class="mb-0" style="opacity:0.8; font-size:0.9rem;">{{ 'common.urgency_desc' | translate }}</p>
+      </div>
+      <div class="d-flex gap-3">
+        <button class="btn rounded-pill px-4 py-2 fw-600"
+                style="background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.3);"
+                (click)="logout()">
+          <i class="bi bi-box-arrow-right me-2"></i>{{ 'common.logout' | translate }}
+        </button>
+        <button class="btn rounded-pill px-4 py-2 fw-700"
+                style="background:#FFD100; color:#1a1a2e; border:none; font-weight:700;">
+          <i class="bi bi-telephone me-2"></i>{{ 'common.call_assistance' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

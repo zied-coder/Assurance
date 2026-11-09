@@ -1,0 +1,77 @@
+<div class="dashboard-layout">
+  <!-- BACKGROUND DECORATION -->
+  <div class="bg-decoration">
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+  </div>
+
+  <!-- TOP NAVIGATION BAR -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <img src="assets/images/bna-logo.png" alt="Assurances" class="nav-logo" style="object-fit:contain; border-radius:8px; background:white; padding:3px;">
+      <span class="nav-brand-text">Assurances</span>
+    </div>
+    <div class="nav-meta">
+      <div class="meta-item">
+        <i class="bi bi-calendar3"></i>
+        <span>{{ currentDate }}</span>
+      </div>
+      <div class="meta-item">
+        <i class="bi bi-shield-lock"></i>
+        <span>Session Sécurisée</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section">
+    <span class="badge-admin">Portail Administration</span>
+    <h1>Console de Pilotage</h1>
+    <p>
+      Accédez aux outils critiques de gestion du portail Assurances. 
+      Supervisez vos collaborateurs et assurez la continuité de service en toute sécurité.
+    </p>
+  </section>
+
+  <!-- MAIN ACTIONS AREA -->
+  <main class="main-content">
+    <div class="actions-grid">
+      <!-- MANAGE USERS CARD -->
+      <a routerLink="/users" class="action-card primary">
+        <i class="bi bi-people-fill card-bg-icon"></i>
+        <div class="icon-wrapper">
+          <i class="bi bi-person-gear"></i>
+        </div>
+        <h2>Gestion Personnel</h2>
+        <p>Administrez les comptes utilisateurs et gestionnaires, gérez les habilitations et supervisez les accès.</p>
+        <div class="btn-label">
+          Accéder à l'annuaire <i class="bi bi-arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- LOGOUT CARD -->
+      <button (click)="logout()" class="action-card danger">
+        <i class="bi bi-box-arrow-right card-bg-icon"></i>
+        <div class="icon-wrapper">
+          <i class="bi bi-power"></i>
+        </div>
+        <h2>Déconnexion</h2>
+        <p>Terminez votre session administrative de manière sécurisée pour protéger l'intégrité des données.</p>
+        <div class="btn-label">
+          Fermer la session <i class="bi bi-box-arrow-right"></i>
+        </div>
+      </button>
+    </div>
+  </main>
+
+  <!-- STATUS FOOTER -->
+  <footer class="status-footer">
+    <div class="status-indicator">
+      <div class="status-dot"></div>
+      <span>Système Opérationnel - Assurances Infrastructure</span>
+    </div>
+    <div class="version-info">
+      v2.4.0-PROD
+    </div>
+  </footer>
+</div>
